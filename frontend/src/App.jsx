@@ -1,0 +1,31 @@
+// src/App.jsx
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from './pages/Home';
+import Test from './pages/Test';
+import CreateProduct from "./pages/Admin/CreateProduct.jsx";
+import ProductsPage from "./pages/Magasin.jsx";
+import Navbar from "./components/Navbar";
+import CreateInformationPage from "./pages/Admin/CreateInformation.jsx";
+
+function App() {
+    return (
+        <BrowserRouter>
+            <div className="d-flex flex-column" style={{ minHeight: "100vh" }}>
+                <Navbar />
+
+                <main className="flex-grow-1" style={{ paddingTop: '70px' }}>
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/test" element={<Test />} />
+                        <Route path="/produits" element={<ProductsPage />} />
+                        <Route path="/create-product" element={<CreateProduct />} />
+                        <Route path="/create-inforamtion" element={<CreateInformationPage/>}/>
+                    </Routes>
+                </main>
+            </div>
+        </BrowserRouter>
+    );
+}
+
+export default App;
+
