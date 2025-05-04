@@ -10,6 +10,7 @@ function Navbar() {
                 <Link className="nav-link d-inline px-2" to="/produits">Magasin</Link>
                 <Link className="nav-link d-inline px-2" to="/create-product">Ajouter Produit</Link>
                 <Link className="nav-link d-inline px-2" to="/create-inforamtion">Editer News</Link>
+                <Link className="nav-link d-inline px-2" to="/stock">Stock</Link>
             </div>
         </nav>
     );

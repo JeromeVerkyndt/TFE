@@ -6,6 +6,9 @@ import CreateProduct from "./pages/Admin/CreateProduct.jsx";
 import ProductsPage from "./pages/Magasin.jsx";
 import Navbar from "./components/Navbar";
 import CreateInformationPage from "./pages/Admin/CreateInformation.jsx";
+import GestionStockPage from "./pages/Admin/GestionStock.jsx";
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 
 function App() {
     return (
@@ -20,6 +23,7 @@ function App() {
                         <Route path="/produits" element={<ProductsPage />} />
                         <Route path="/create-product" element={<CreateProduct />} />
                         <Route path="/create-inforamtion" element={<CreateInformationPage/>}/>
+                        <Route path="/stock" element={<GestionStockPage/>}/>
                     </Routes>
                 </main>
             </div>

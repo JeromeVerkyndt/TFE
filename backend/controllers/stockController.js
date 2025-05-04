@@ -12,19 +12,18 @@ const getAllStock = (req, res) => {
 };
 
 const createStock = (req, res) => {
-    const { name, quantity } = req.body;
-    const sql = `INSERT INTO stock (name, quantity) VALUES (?, ?)`;
+    const { product_id, quantity, promo } = req.body;
+    const sql = `INSERT INTO stock (product_id, quantity, promo, created_at, deleted, deleted_at)
+               VALUES (?, ?, ?, NOW(), false, NULL)`;
 
-    req.db.query(sql, [name, quantity], (err, result) => {
+    req.db.query(sql, [product_id, quantity, promo], (err, result) => {
         if (err) {
-            console.error('Erreur lors de la création du stock :', err);
-            res.status(500).json({ error: 'Erreur serveur' });
-        } else {
-            res.status(201).json({ message: 'Stock ajouté', id: result.insertId });
+            console.error('Erreur insertion stock :', err);
+            return res.status(500).json({ error: 'Erreur serveur' });
         }
+        res.status(201).json({ message: 'Stock ajouté avec succès' });
     });
 };
-
 const softDeleteStock = (req, res) => {
     const { id } = req.params;
     const sql = `UPDATE stock SET deleted = TRUE, deleted_at = NOW() WHERE id = ?`;
@@ -39,9 +38,28 @@ const softDeleteStock = (req, res) => {
     });
 };
 
+const getAllDataStock = (req, res) => {
+    const sql = `
+        SELECT stock.*, products.name AS product_name, products.description As product_description, products.price As product_price, products.unit As product_unit
+        FROM stock
+        JOIN products ON stock.product_id = products.id
+        WHERE stock.deleted = FALSE
+    `;
+
+    req.db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la récupération du stock :', err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        } else {
+            res.status(200).json(results);
+        }
+    });
+};
+
 
 module.exports = {
     getAllStock,
     createStock,
     softDeleteStock,
+    getAllDataStock,
 };
