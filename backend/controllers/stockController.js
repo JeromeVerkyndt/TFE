@@ -56,10 +56,26 @@ const getAllDataStock = (req, res) => {
     });
 };
 
+const updateStockById = (req, res) => {
+    const { id } = req.params;
+    const { quantity, promo } = req.body;
+
+    const sql = `UPDATE stock SET quantity = ?, promo = ? WHERE id = ?`;
+
+    req.db.query(sql, [quantity, promo, id], (err) => {
+        if (err) {
+            console.error('Erreur lors de la mise à jour du stock :', err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        } else {
+            res.status(200).json({ message: 'Stock mis à jour' });
+        }
+    });
+};
 
 module.exports = {
     getAllStock,
     createStock,
     softDeleteStock,
     getAllDataStock,
+    updateStockById,
 };

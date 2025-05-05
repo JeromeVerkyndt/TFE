@@ -72,6 +72,21 @@ function GestionStockPage() {
             });
     };
 
+    const handleUpdate = (id, quantity, promo) => {
+        axios.put(`http://localhost:5001/api/stock/update/${id}`, {
+            quantity,
+            promo
+        })
+            .then(() => {
+                alert("Stock mis à jour !");
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la mise à jour :", error);
+            });
+    };
+
+
+
 
     return (
         <>
@@ -148,15 +163,45 @@ function GestionStockPage() {
             </tr>
             </thead>
             <tbody>
-            {stockList.map(item => (
+            {stockList.map((item, index) => (
                 <tr key={item.id}>
                     <td>{item.id}</td>
                     <td>{item.product_name}</td>
-                    <td>{item.quantity} {item.product_unit}</td>
-                    <td>{item.product_price} €/{item.product_unit}</td>
-                    <td>{item.promo}</td>
                     <td>
-                        <Button variant="primary">
+                        <div className="d-flex align-items-center">
+                        <input
+                            type="number"
+                            className="form-control bg-white text-dark w-auto"
+                            value={item.quantity}
+                            onChange={(e) => {
+                                const newStockList = [...stockList];
+                                newStockList[index].quantity = e.target.value;
+                                setStockList(newStockList);
+                            }}
+                        />
+                            <span> {item.product_unit}</span>
+                        </div>
+                    </td>
+                    <td>{item.product_price} €/{item.product_unit}</td>
+                    <td>
+                        <div className="d-flex align-items-center">
+                        <input
+                            type="number"
+                            min={0}
+                            max={100}
+                            className="form-control bg-white text-dark w-auto"
+                            value={item.promo}
+                            onChange={(e) => {
+                                const newStockList = [...stockList];
+                                newStockList[index].promo = e.target.value;
+                                setStockList(newStockList);
+                            }}
+                        />
+                            <span> %</span>
+                        </div>
+                    </td>
+                    <td>
+                        <Button variant="primary" onClick={() => handleUpdate(item.id, item.quantity, item.promo)}>
                             <i className="bi bi-upload"></i>
                         </Button>
                         <Button variant="danger" onClick={() => handleSoftDelete(item.id)}>
