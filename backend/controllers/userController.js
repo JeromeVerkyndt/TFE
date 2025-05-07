@@ -31,8 +31,8 @@ const softDeleteUser = (req, res) => {
 
 const getAllUsers = (req, res) => {
     const sql = `
-        SELECT id, username, email, created_at
-        FROM users
+        SELECT *
+        FROM user
         WHERE deleted = false
     `;
     req.db.query(sql, (err, results) => {
@@ -63,10 +63,27 @@ const getUserById = (req, res) => {
     });
 };
 
+const updateUserById = (req, res) => {
+    const { id } = req.params;
+    const { balance, extra_balance } = req.body;
+
+    const sql = `UPDATE user SET balance = ?, extra_balance = ? WHERE id = ?`;
+
+    req.db.query(sql, [balance, extra_balance, id], (err) => {
+        if (err) {
+            console.error('Erreur lors de la mise à jour du user :', err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        } else {
+            res.status(200).json({ message: 'user mis à jour' });
+        }
+    });
+};
+
 module.exports = {
     createUser,
     softDeleteUser,
     getAllUsers,
-    getUserById
+    getUserById,
+    updateUserById
 };
 

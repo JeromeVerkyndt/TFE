@@ -4,12 +4,14 @@ const {
     createUser,
     softDeleteUser,
     getAllUsers,
-    getUserById
+    getUserById,
+    updateUserById
 } = require('../controllers/userController');
 
 router.post('/', createUser);
 router.delete('/:id', softDeleteUser);
 router.get('/', getAllUsers);
 router.get('/:id', getUserById);
+router.put('/update/:id', updateUserById);
 
 module.exports = router;

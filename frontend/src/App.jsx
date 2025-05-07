@@ -7,6 +7,7 @@ import ProductsPage from "./pages/Magasin.jsx";
 import Navbar from "./components/Navbar";
 import CreateInformationPage from "./pages/Admin/CreateInformation.jsx";
 import GestionStockPage from "./pages/Admin/GestionStock.jsx";
+import SuiviClientPage from "./pages/Admin/SuiviClient.jsx";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 
@@ -24,6 +25,7 @@ function App() {
                         <Route path="/create-product" element={<CreateProduct />} />
                         <Route path="/create-inforamtion" element={<CreateInformationPage/>}/>
                         <Route path="/stock" element={<GestionStockPage/>}/>
+                        <Route path="/suivi-client" element={<SuiviClientPage/>}/>
                     </Routes>
                 </main>
             </div>

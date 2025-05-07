@@ -11,6 +11,7 @@ function Navbar() {
                 <Link className="nav-link d-inline px-2" to="/create-product">Ajouter Produit</Link>
                 <Link className="nav-link d-inline px-2" to="/create-inforamtion">Editer News</Link>
                 <Link className="nav-link d-inline px-2" to="/stock">Stock</Link>
+                <Link className="nav-link d-inline px-2" to="/suivi-client">Client</Link>
             </div>
         </nav>
     );
