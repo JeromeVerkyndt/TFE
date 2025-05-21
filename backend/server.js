@@ -8,13 +8,23 @@ const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const orderItemRoutes = require('./routes/orderItemRoutes');
 const newsRoutes = require('./routes/newsRoutes');
-
+const authRoutes = require('./routes/authRoutes');
+const cookieParser = require('cookie-parser');
 
 
 const app = express();
 const port = 5001;
 
-app.use(cors());
+//auth
+require('dotenv').config();
+
+app.use(cookieParser());
+
+
+app.use(cors({
+    origin: 'http://localhost:5173',  // ton frontend
+    credentials: true                // autorise l'envoi de cookies/headers auth
+}));
 
 // backend/server.js
 app.use(express.json());  // Pour parser le corps de la requête en JSON
@@ -61,6 +71,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/order', orderRoutes);
 app.use('/api/order_item', orderItemRoutes);
 app.use('/api/news', newsRoutes);
+app.use('/api/auth', authRoutes);
 
 
 // Démarrer le serveur
