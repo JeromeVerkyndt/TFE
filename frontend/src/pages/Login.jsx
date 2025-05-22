@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // 👈 Importer le hook
+
 
 axios.defaults.withCredentials = true;
 
@@ -7,6 +9,7 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [msg, setMsg] = useState('');
+    const navigate = useNavigate(); // 👈 Initialiser le hook
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -17,6 +20,7 @@ const Login = () => {
                 password
             });
             setMsg('Connecté !');
+            navigate('/');
         } catch (err) {
             setMsg(err.response?.data?.error || 'Erreur');
         }
