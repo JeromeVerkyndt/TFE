@@ -1,11 +1,14 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import useAuth from './hooks/useAuth';
 
 import Home from './pages/Home';
 import Test from './pages/Test';
 import CreateProduct from "./pages/Admin/CreateProduct.jsx";
 import ProductsPage from "./pages/Magasin.jsx";
 import Navbar from "./components/Navbar";
+import NavbarHub from "./components/HubNavbar.jsx";
+import AdminNavbar from "./components/AdminNavbar.jsx";
 import CreateInformationPage from "./pages/Admin/CreateInformation.jsx";
 import GestionStockPage from "./pages/Admin/GestionStock.jsx";
 import SuiviClientPage from "./pages/Admin/SuiviClient.jsx";
@@ -20,10 +23,14 @@ import { useLayoutEffect } from "react";
 function AppContent() {
     const location = useLocation();
     const hideNavbar = location.pathname === '/login' || location.pathname === '/register';
+    const { user } = useAuth();
 
     return (
         <div className="d-flex flex-column" style={{ minHeight: "100vh" }}>
-            {!hideNavbar && <Navbar />}
+            {user?.role === 'CLIENT' && <Navbar />}
+            {user?.role === 'HUB' && <NavbarHub />}
+            {user?.role === 'ADMIN' && <AdminNavbar />}
+
 
             <main className="flex-grow-1" style={{ paddingTop: '70px' }}>
                 <Routes>
