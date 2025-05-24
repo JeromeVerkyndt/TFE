@@ -1,15 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import useAuth from '../hooks/useAuth';
 
-function Navbar() {
+
+function NavbarAdmin() {
     const navigate = useNavigate();
-    const { user } = useAuth();
 
     const handleLogout = async () => {
         try {
             await axios.post('/api/auth/logout', {}, { withCredentials: true });
-            navigate('/login'); // Redirige vers la page de login
+            navigate('/login');
+            window.location.reload();
         } catch (err) {
             console.error("Erreur lors de la déconnexion :", err);
         }
@@ -17,7 +17,7 @@ function Navbar() {
 
     return (
         <nav className="navbar px-3 fixed-top navbar-dark" style={{ backgroundColor: '#14532d' }}>
-            <Link className="navbar-brand" to="/">{user?.last_name}  {user?.first_name}</Link>
+            <Link className="navbar-brand" to="/">Admin</Link>
             <div>
                 <Link className="text-white nav-link d-inline px-2" to="/">Accueil</Link>
                 <Link className="text-white nav-link d-inline px-2" to="/test">Test</Link>
@@ -35,4 +35,4 @@ function Navbar() {
     );
 }
 
-export default Navbar;
+export default NavbarAdmin;

@@ -35,7 +35,13 @@ router.post('/register', async (req, res) => {
 // 🔐 Connexion
 router.post('/login', (req, res) => {
     const { email, password } = req.body;
-    req.db.query('SELECT * FROM user WHERE email = ?', [email], async (err, results) => {
+    req.db.query(
+        `SELECT user.*, user_status.name AS status_name
+         FROM user
+         JOIN user_status ON user.status_id = user_status.id
+         WHERE user.email = ?`,
+        [email],
+        async (err, results) => {
         if (err || results.length === 0)
             return res.status(401).json({ error: 'Email incorrect' });
 
@@ -43,7 +49,7 @@ router.post('/login', (req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if (!match) return res.status(401).json({ error: 'Mot de passe incorrect' });
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '2h' });
+        const token = jwt.sign({ id: user.id, role: user.status_name }, process.env.JWT_SECRET, { expiresIn: '2h' });
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -63,8 +69,20 @@ router.post('/logout', (req, res) => {
 
 // Route protégée pour tester la connexion
 router.get('/me', authMiddleware, (req, res) => {
-    res.json({ message: 'Tu es connecté', user: req.user });
+    req.db.query(
+        `SELECT user.id, user.email, user.first_name, user.last_name, user_status.name AS role
+         FROM user 
+         JOIN user_status ON user.status_id = user_status.id
+         WHERE user.id = ?`,
+        [req.user.id],
+        (err, results) => {
+            if (err || results.length === 0) return res.sendStatus(401);
+            const user = results[0];
+            res.json({ user });
+        }
+    );
 });
+
 
 
 module.exports = router;

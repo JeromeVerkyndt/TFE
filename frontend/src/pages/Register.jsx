@@ -1,5 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import Card from "react-bootstrap/Card";
+import CardTitle from "react-bootstrap/CardTitle";
+import Form from "react-bootstrap/Form";
+import {Link} from "react-router-dom";
+import Button from "react-bootstrap/Button";
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -28,13 +33,44 @@ const Register = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type="text" name="first_name" placeholder="Prénom" value={formData.first_name} onChange={handleChange} />
-            <input type="text" name="last_name" placeholder="Nom" value={formData.last_name} onChange={handleChange} />
-            <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
-            <input type="password" name="password" placeholder="Mot de passe" value={formData.password} onChange={handleChange} />
-            <button type="submit">Créer un compte</button>
-        </form>
+
+        <Card style={{ width: '50%' }} className="mx-auto">
+            <Card.Body>
+                <CardTitle>
+                    <h2>Se connecter</h2>
+                </CardTitle>
+                <Form onSubmit={handleSubmit}>
+
+                    <Form.Group controlId="formBasicName">
+                        <Form.Label>Prénom:</Form.Label>
+                        <Form.Control name="first_name" type="lastname" placeholder="Prénom" onChange={handleChange} value={formData.first_name} style={{ width: '40%' }} required />
+                    </Form.Group>
+
+                    <Form.Group controlId="formBasicName">
+                        <Form.Label>Nom:</Form.Label>
+                        <Form.Control name="last_name" type="name" placeholder="Nom" onChange={handleChange} value={formData.last_name} style={{ width: '40%' }} required />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email:</Form.Label>
+                        <Form.Control name="email" type="email" placeholder="Entré mail" onChange={handleChange} value={formData.email} style={{ width: '60%' }} required />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Mot de passe:</Form.Label>
+                        <Form.Control name="password" type="password" placeholder="Mot de passe" onChange={handleChange} value={formData.password} style={{ width: '60%' }} required />
+                    </Form.Group>
+                    <Card.Text>
+                        Vous avez déjà un compte ? <Link to="/login">Se connecter</Link>
+                    </Card.Text>
+                    <Button variant="primary" type="submit">
+                        Se connecter
+                    </Button>
+                </Form>
+            </Card.Body>
+        </Card>
+
+
     );
 };
 
