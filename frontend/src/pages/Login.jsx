@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // 👈 Importer le hook
-
+import { useNavigate } from 'react-router-dom';
+import Form from "react-bootstrap/Form";
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import CardHeader from 'react-bootstrap/CardHeader'
+import CardTitle from 'react-bootstrap/CardTitle'
+import { Link } from 'react-router-dom';
 
 axios.defaults.withCredentials = true;
 
@@ -9,7 +14,7 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [msg, setMsg] = useState('');
-    const navigate = useNavigate(); // 👈 Initialiser le hook
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -21,21 +26,40 @@ const Login = () => {
             });
             setMsg('Connecté !');
             navigate('/');
+            window.location.reload();
         } catch (err) {
             setMsg(err.response?.data?.error || 'Erreur');
         }
     };
 
     return (
-        <div>
-            <h2>Connexion</h2>
-            <form onSubmit={handleLogin}>
-                <input type="email" placeholder="Email" onChange={e => setEmail(e.target.value)} />
-                <input type="password" placeholder="Mot de passe" onChange={e => setPassword(e.target.value)} />
-                <button type="submit">Se connecter</button>
-            </form>
-            {msg && <p>{msg}</p>}
-        </div>
+        <Card style={{ width: '50%' }} className="mx-auto">
+            <Card.Body>
+                <CardTitle>
+                    <h2>Se connecter</h2>
+                </CardTitle>
+                <Form onSubmit={handleLogin}>
+
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Email</Form.Label>
+                        <Form.Control type="email" placeholder="Enter email" onChange={e => setEmail(e.target.value)} style={{ width: '60%' }} required />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Mot de passe</Form.Label>
+                        <Form.Control type="password" placeholder="Password" onChange={e => setPassword(e.target.value)} style={{ width: '60%' }} required />
+                    </Form.Group>
+                    <Card.Text>
+                        Vous n'avez pas encore de compte ? <Link to="/register">S'inscrire</Link>
+                    </Card.Text>
+                    <Button variant="primary" type="submit">
+                        Se connecter
+                    </Button>
+                </Form>
+            </Card.Body>
+        </Card>
+
+
     );
 };
 
