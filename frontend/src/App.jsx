@@ -5,7 +5,7 @@ import useAuth from './hooks/useAuth';
 import Home from './pages/Home';
 import Test from './pages/Test';
 import CreateProduct from "./pages/Admin/CreateProduct.jsx";
-import ProductsPage from "./pages/Magasin.jsx";
+import ProductsPage from "./pages/Hub/Magasin.jsx";
 import Navbar from "./components/Navbar";
 import NavbarHub from "./components/HubNavbar.jsx";
 import AdminNavbar from "./components/AdminNavbar.jsx";
