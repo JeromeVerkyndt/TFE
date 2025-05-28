@@ -8,7 +8,7 @@ const {
     getOrdersByUserId
 } = require('../controllers/orderController');
 
-router.post('/', createOrder);
+router.post('/create', createOrder);
 router.delete('/:id', softDeleteOrder);
 router.get('/', getAllOrders);
 router.get('/:id', getOrderById);

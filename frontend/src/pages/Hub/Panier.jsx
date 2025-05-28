@@ -53,6 +53,40 @@ function ProductsPage() {
         selectedItems[product.id]?.quantity > 0
     );
 
+    const handleValidateOrder = async () => {
+        try {
+
+            const orderResponse = await axios.post("http://localhost:5001/api/order/create", {
+                user_id: client.id
+            });
+            const orderId = orderResponse.data.id;
+
+            const orderItemRequests = selectedProducts.map(product => {
+                const quantity = parseFloat(selectedItems[product.id].quantity);
+                const promo = product.promo > 0 ? product.promo : 0;
+
+                return axios.post("http://localhost:5001/api/order-item/create", {
+                    order_id: orderId,
+                    product_id: product.id,
+                    quantity,
+                    promo
+                });
+            });
+
+            await Promise.all(orderItemRequests);
+
+            alert("Commande validée avec succès !");
+            setShowModal(false);
+            setSelectedItems({}); 
+
+        } catch (error) {
+            console.error("Erreur lors de la validation de la commande :", error);
+            alert("Erreur lors de la validation. Veuillez réessayer.");
+        }
+    };
+
+
+
     return (
         <>
         <style>
@@ -178,7 +212,13 @@ function ProductsPage() {
                     <Button variant="secondary" onClick={() => setShowModal(false)}>
                         Fermer
                     </Button>
+                    {selectedProducts.length > 0 && (
+                        <Button variant="success" onClick={handleValidateOrder} disabled={selectedProducts.length === 0}>
+                            Valider la commande
+                        </Button>
+                    )}
                 </Modal.Footer>
+
             </Modal>
 
         </>

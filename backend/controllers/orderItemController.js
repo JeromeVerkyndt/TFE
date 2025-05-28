@@ -1,10 +1,10 @@
 const createOrderItem = (req, res) => {
-    const { order_id, product_id, quantity } = req.body;
+    const { order_id, product_id, quantity, promo } = req.body;
     const sql = `
-        INSERT INTO order_items (order_id, product_id, quantity, created_at)
-        VALUES (?, ?, ?, NOW())
+        INSERT INTO order_items (order_id, product_id, quantity, promo, created_at)
+        VALUES (?, ?, ?, ?, NOW())
     `;
-    req.db.query(sql, [order_id, product_id, quantity], (err, result) => {
+    req.db.query(sql, [order_id, product_id, quantity, promo], (err, result) => {
         if (err) {
             console.error('Error creating order_item:', err);
             return res.status(500).json({ error: 'Server error' });

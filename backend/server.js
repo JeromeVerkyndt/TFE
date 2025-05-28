@@ -69,7 +69,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/stock', stockRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/order', orderRoutes);
-app.use('/api/order_item', orderItemRoutes);
+app.use('/api/order-item', orderItemRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/auth', authRoutes);
 

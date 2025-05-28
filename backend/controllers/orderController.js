@@ -1,11 +1,11 @@
 // Create new order
 const createOrder = (req, res) => {
-    const { user_id, total_price } = req.body;
+    const { user_id } = req.body;
     const sql = `
-        INSERT INTO orders (user_id, total_price, created_at)
-        VALUES (?, ?, NOW())
+        INSERT INTO orders (user_id, created_at)
+        VALUES (?, NOW())
     `;
-    req.db.query(sql, [user_id, total_price], (err, result) => {
+    req.db.query(sql, [user_id], (err, result) => {
         if (err) {
             console.error('Error creating order:', err);
             return res.status(500).json({ error: 'Server error' });
