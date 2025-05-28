@@ -21,7 +21,6 @@ function NavbarAdmin() {
             <div>
                 <Link className="text-white nav-link d-inline px-2" to="/">Accueil</Link>
                 <Link className="text-white nav-link d-inline px-2" to="/test">Test</Link>
-                <Link className="text-white nav-link d-inline px-2" to="/produits">Magasin</Link>
                 <Link className="text-white nav-link d-inline px-2" to="/create-product">Ajouter Produit</Link>
                 <Link className="text-white nav-link d-inline px-2" to="/create-inforamtion">Editer News</Link>
                 <Link className="text-white nav-link d-inline px-2" to="/stock">Stock</Link>

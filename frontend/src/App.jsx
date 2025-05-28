@@ -5,7 +5,7 @@ import useAuth from './hooks/useAuth';
 import Home from './pages/Home';
 import Test from './pages/Test';
 import CreateProduct from "./pages/Admin/CreateProduct.jsx";
-import ProductsPage from "./pages/Hub/Magasin.jsx";
+import ProductsPage from "./pages/Hub/Panier.jsx";
 import Navbar from "./components/Navbar";
 import NavbarHub from "./components/HubNavbar.jsx";
 import AdminNavbar from "./components/AdminNavbar.jsx";
@@ -39,12 +39,12 @@ function AppContent() {
 
                     <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
                     <Route path="/test" element={<PrivateRoute><Test /></PrivateRoute>} />
-                    <Route path="/produits" element={<PrivateRoute><ProductsPage /></PrivateRoute>} />
+                    <Route path="/hub/panier" element={<PrivateRoute><ProductsPage /></PrivateRoute>} />
                     <Route path="/create-product" element={<PrivateRoute><CreateProduct /></PrivateRoute>} />
                     <Route path="/create-inforamtion" element={<PrivateRoute><CreateInformationPage /></PrivateRoute>} />
                     <Route path="/stock" element={<PrivateRoute><GestionStockPage /></PrivateRoute>} />
                     <Route path="/suivi-client" element={<PrivateRoute><SuiviClientPage /></PrivateRoute>} />
-                    <Route path="/user-selecte" element={<PrivateRoute><UserSelectionPage /></PrivateRoute>} />
+                    <Route path="/hub/user-selecte" element={<PrivateRoute><UserSelectionPage /></PrivateRoute>} />
                 </Routes>
             </main>
         </div>

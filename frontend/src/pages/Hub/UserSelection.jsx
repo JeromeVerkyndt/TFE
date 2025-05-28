@@ -1,18 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 
 function UsersSelectePage() {
     const [users, setUsers] = useState([]);
 
+    const navigate = useNavigate();
+
+    const handleSelectUser = (user) => {
+        navigate("/hub/panier", { state: { client: user } });
+    };
+
+
     useEffect(() => {
-        // Remplace ceci par ton appel API réel
-        const fakeUsers = Array.from({ length: 17 }, (_, i) => ({
-            id: i + 1,
-            name: `User ${i + 1}`,
-        }));
-        setUsers(fakeUsers);
+        axios.get("http://localhost:5001/api/user/clients")
+            .then(response => {
+                setUsers(response.data);
+            })
+            .catch(error => {
+                console.error("Erreur lors du chargement des clients :", error);
+            });
     }, []);
+
+
 
     const rows = [];
     for (let i = 0; i < users.length; i += 5) {
@@ -35,10 +48,13 @@ function UsersSelectePage() {
                         <Button
                             variant="success"
                             className="w-100"
-                            style={{ height: "50px" }}
+                            style={{ height: "60px", display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+                            onClick={() => handleSelectUser(user)}
                         >
-                            {user.name}
+                            <div>{user.first_name}</div>
+                            <div>{user.last_name}</div>
                         </Button>
+
                     </div>
                 ))}
             </Row>

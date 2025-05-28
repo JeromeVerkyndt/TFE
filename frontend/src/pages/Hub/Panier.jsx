@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Form, ListGroup, InputGroup, FormCheck, Button, Modal } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 
@@ -8,6 +9,9 @@ function ProductsPage() {
     const [products, setProducts] = useState([]);
     const [selectedItems, setSelectedItems] = useState({});
     const [showModal, setShowModal] = useState(false);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const client = location.state?.client;
 
     useEffect(() => {
         axios.get("http://localhost:5001/api/stock/all_data")
@@ -18,6 +22,11 @@ function ProductsPage() {
                 console.error("Erreur lors du chargement du stock :", error);
             });
     }, []);
+
+    if (!client) {
+        navigate("/user-selecte");
+        return null;
+    }
 
     const handleQuantityChange = (productId, value) => {
         setSelectedItems(prev => ({
@@ -63,7 +72,7 @@ function ProductsPage() {
         </style>
 
         <div className="container-fluid">
-            <h2>Liste des produits</h2>
+            <h2>Liste des produits {client.first_name}</h2>
 
             <Form>
                 <ListGroup>

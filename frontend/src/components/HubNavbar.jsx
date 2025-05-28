@@ -18,8 +18,8 @@ function NavbarHub() {
             <Link className="navbar-brand" to="/">Click & Collect</Link>
             <div>
                 <Link className="text-white nav-link d-inline px-2" to="/">Accueil</Link>
-                <Link className="text-white nav-link d-inline px-2" to="/test">Test</Link>
-                <Link className="text-white nav-link d-inline px-2" to="/produits">Magasin</Link>
+                <Link className="text-white nav-link d-inline px-2" to="/hub/user-selecte">Selection</Link>
+                <Link className="text-white nav-link d-inline px-2" to="/hub/panier">Panier</Link>
 
 
                 <button onClick={handleLogout} className="btn btn-outline-danger btn-sm ms-3">

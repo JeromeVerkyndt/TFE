@@ -1,22 +1,9 @@
-const createUser = (req, res) => {
-    const { username, email, password } = req.body;
-    const sql = `
-        INSERT INTO users (username, email, password, created_at, deleted, deleted_at)
-        VALUES (?, ?, ?, NOW(), false, NULL)
-    `;
-    req.db.query(sql, [username, email, password], (err, result) => {
-        if (err) {
-            console.error('Error creating user:', err);
-            return res.status(500).json({ error: 'Server error' });
-        }
-        res.status(201).json({ message: 'User created', userId: result.insertId });
-    });
-};
+
 
 const softDeleteUser = (req, res) => {
     const { id } = req.params;
     const sql = `
-        UPDATE users
+        UPDATE user
         SET deleted = true, deleted_at = NOW()
         WHERE id = ?
     `;
@@ -44,11 +31,29 @@ const getAllUsers = (req, res) => {
     });
 };
 
+const getAllClients = (req, res) => {
+    const sql = `
+        SELECT user.*
+        FROM user
+        JOIN user_status ON user.status_id = user_status.id
+        WHERE user_status.name = 'CLIENT' AND user.deleted = false
+    `;
+    req.db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error fetching client users:', err);
+            return res.status(500).json({ error: 'Server error' });
+        }
+        res.status(200).json(results);
+    });
+};
+
+
+
 const getUserById = (req, res) => {
     const { id } = req.params;
     const sql = `
-        SELECT id, username, email, created_at
-        FROM users
+        SELECT id, last_name, email, created_at
+        FROM user
         WHERE id = ? AND deleted = false
     `;
     req.db.query(sql, [id], (err, results) => {
@@ -80,10 +85,10 @@ const updateUserById = (req, res) => {
 };
 
 module.exports = {
-    createUser,
     softDeleteUser,
     getAllUsers,
     getUserById,
-    updateUserById
+    updateUserById,
+    getAllClients,
 };
 
