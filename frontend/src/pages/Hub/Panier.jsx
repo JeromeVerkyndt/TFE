@@ -56,6 +56,14 @@ function ProductsPage() {
     const handleValidateOrder = async () => {
         try {
 
+            const totalAmount = selectedProducts.reduce((acc, product) => {
+                const quantity = parseFloat(selectedItems[product.id].quantity);
+                const priceUnit = product.promo > 0
+                    ? product.product_price * (1 - product.promo / 100)
+                    : product.product_price;
+                return acc + quantity * priceUnit;
+            }, 0);
+
             const orderResponse = await axios.post("http://localhost:5001/api/order/create", {
                 user_id: client.id
             });
@@ -74,6 +82,13 @@ function ProductsPage() {
             });
 
             await Promise.all(orderItemRequests);
+
+            await axios.post("http://localhost:5001/api/transaction/create", {
+                user_id: client.id,
+                amount: totalAmount,
+                type: "commande",
+                order_id: orderId
+            });
 
             alert("Commande validée avec succès !");
             setShowModal(false);

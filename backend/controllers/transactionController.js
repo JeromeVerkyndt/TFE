@@ -14,7 +14,35 @@ const getTransactionByUserId = (req, res) => {
     });
 };
 
+const createTransaction = (req, res) => {
+    const { user_id, amount, type, order_id } = req.body;
+
+    if (!user_id || !amount || !type) {
+        return res.status(400).json({ error: "Champs requis manquants" });
+    }
+
+    const sql = `
+        INSERT INTO transaction (user_id, amount, type, order_id, created_at)
+        VALUES (?, ?, ?, ?, NOW())
+    `;
+
+    req.db.query(
+        sql,
+        [user_id, amount, type, order_id || null],
+        (err, result) => {
+            if (err) {
+                console.error("Erreur lors de la création de la transaction :", err);
+                return res.status(500).json({ error: "Erreur serveur" });
+            }
+
+            res.status(201).json({ id: result.insertId });
+        }
+    );
+};
+
+
 module.exports = {
 
-    getTransactionByUserId
+    getTransactionByUserId,
+    createTransaction
 };
