@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button'
 import Modal from "react-bootstrap/Modal";
+import Collapse from 'react-bootstrap/Collapse';
 import Form from "react-bootstrap/Form";
 
 
@@ -10,6 +11,36 @@ import Form from "react-bootstrap/Form";
 function SuiviClientPage() {
     const [userList, setUserList] = useState([]);
     const [modifiedRows, setModifiedRows] = useState({});
+
+    const [showTransactionModal, setShowTransactionModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [transactions, setTransactions] = useState([]);
+
+
+    const [openCollapseId, setOpenCollapseId] = useState(null);
+    const [orderItems, setOrderItems] = useState({});
+
+    const toggleCollapse = (transactionId, orderId) => {
+        if (openCollapseId === transactionId) {
+            setOpenCollapseId(null);
+        } else {
+            setOpenCollapseId(transactionId);
+
+            if (!orderItems[orderId]) {
+                axios.get(`http://localhost:5001/api/order-item/order/${orderId}`)
+                    .then((response) => {
+                        setOrderItems(prev => ({
+                            ...prev,
+                            [orderId]: response.data
+                        }));
+                    })
+                    .catch((error) => {
+                        console.error("Erreur lors du chargement des items :", error);
+                    });
+            }
+        }
+    };
+
 
 
 
@@ -46,6 +77,16 @@ function SuiviClientPage() {
         setModifiedRows(prev => ({ ...prev, [userId]: true }));
     };
 
+    const fetchTransactions = (userId) => {
+        axios.get(`http://localhost:5001/api/transaction/user/${userId}`)
+            .then(response => {
+                setTransactions(response.data);
+                setShowTransactionModal(true);
+            })
+            .catch(error => {
+                console.error("Erreur lors de la récupération des transactions :", error);
+            });
+    };
 
 
     return (
@@ -122,11 +163,121 @@ function SuiviClientPage() {
                                     <i className="bi bi-envelope-arrow-up"></i>
                                 </Button>
 
+                                <Button variant="info" onClick={() => {
+                                    setSelectedUser(item);
+                                    fetchTransactions(item.id);
+                                }}>
+                                    <i className="bi bi-receipt"></i>
+                                </Button>
+
+
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </Table>
+
+
+            {/* Modal avec l'historique des transactions */}
+
+            <Modal show={showTransactionModal} onHide={() => setShowTransactionModal(false)} size="lg">
+                <Modal.Header closeButton>
+                    <Modal.Title>Transactions de {selectedUser?.first_name} {selectedUser?.last_name}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {transactions.length > 0 ? (
+                        <Table striped bordered hover>
+                            <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Montant</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {transactions.map((transaction) => (
+                                <React.Fragment key={transaction.id}>
+                                    <tr>
+                                        <td>{new Date(transaction.created_at).toLocaleString()}</td>
+                                        <td>{transaction.amount} €</td>
+                                        <td>{transaction.type}</td>
+                                        <td>{transaction.description}</td>
+                                        <td>
+                                            {transaction.type === "commande" && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline-primary"
+                                                    onClick={() => toggleCollapse(transaction.id, transaction.order_id)}
+                                                    aria-controls={`collapse-${transaction.id}`}
+                                                    aria-expanded={openCollapseId === transaction.id}
+                                                >
+                                                    Voir détails
+                                                </Button>
+                                            )}
+                                        </td>
+                                    </tr>
+
+                                    {transaction.type === "commande" && (
+                                        <tr>
+                                            <td colSpan="5" className="p-0 border-0">
+
+
+                                                {/* Collapse avec le détail des commandes */}
+
+                                                <Collapse in={openCollapseId === transaction.id}>
+                                                    <div id={`collapse-${transaction.id}`} className="p-3 bg-light border-top">
+                                                        <strong>Détails de la commande</strong>
+                                                        <hr />
+                                                        {orderItems[transaction.order_id] ? (
+                                                            <ul className="list-group">
+                                                                {orderItems[transaction.order_id].map((item) => (
+                                                                    <li
+                                                                        key={item.id}
+                                                                        className="list-group-item d-flex justify-content-between align-items-center"
+                                                                    >
+                                                                        <div>
+                                                                            {item.name} — {item.quantity} {item.unit} X {item.price} €
+                                                                            {item.promo > 0 && (
+                                                                                <span className="ms-2 text-success">(-{item.promo}% promo)</span>
+                                                                            )}
+                                                                        </div>
+                                                                        <div>
+                                                                            <strong>
+                                                                                {(
+                                                                                    item.quantity *
+                                                                                    item.price *
+                                                                                    (1 - item.promo / 100)
+                                                                                ).toFixed(2)}{" "}
+                                                                                €
+                                                                            </strong>
+                                                                        </div>
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        ) : (
+                                                            <p>Chargement des détails...</p>
+                                                        )}
+                                                    </div>
+                                                </Collapse>
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                            </tbody>
+
+                        </Table>
+                    ) : (
+                        <p>Aucune transaction trouvée.</p>
+                    )}
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowTransactionModal(false)}>Fermer</Button>
+                </Modal.Footer>
+            </Modal>
+
         </>
     );
 }

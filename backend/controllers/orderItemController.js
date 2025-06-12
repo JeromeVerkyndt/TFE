@@ -1,5 +1,8 @@
 const createOrderItem = (req, res) => {
-    const { order_id, product_id, quantity, promo } = req.body;
+    let { order_id, product_id, quantity, promo } = req.body;
+    if (promo === undefined || promo === null || promo === '') {
+        promo = 0;
+    }
     const sql = `
         INSERT INTO order_items (order_id, product_id, quantity, promo, created_at)
         VALUES (?, ?, ?, ?, NOW())
@@ -44,7 +47,8 @@ const getOrderItemsByOrderId = (req, res) => {
     const { order_id } = req.params;
     const sql = `
         SELECT * FROM order_items
-        WHERE order_id = ? AND deleted = FALSE
+        JOIN products ON order_items.product_id = products.id
+        WHERE order_id = ? AND order_items.deleted = FALSE
     `;
     req.db.query(sql, [order_id], (err, results) => {
         if (err) {

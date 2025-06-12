@@ -9,6 +9,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const orderItemRoutes = require('./routes/orderItemRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const authRoutes = require('./routes/authRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
 const cookieParser = require('cookie-parser');
 
 
@@ -72,6 +73,7 @@ app.use('/api/order', orderRoutes);
 app.use('/api/order-item', orderItemRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/transaction', transactionRoutes);
 
 
 // Démarrer le serveur

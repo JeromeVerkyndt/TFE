@@ -24,7 +24,7 @@ function ProductsPage() {
     }, []);
 
     if (!client) {
-        navigate("/user-selecte");
+        navigate("/hub/user-selecte");
         return null;
     }
 
@@ -67,7 +67,7 @@ function ProductsPage() {
 
                 return axios.post("http://localhost:5001/api/order-item/create", {
                     order_id: orderId,
-                    product_id: product.id,
+                    product_id: product.product_id,
                     quantity,
                     promo
                 });
@@ -178,9 +178,9 @@ function ProductsPage() {
                             <ul>
                                 {selectedProducts.map(product => {
                                     const quantity = parseFloat(selectedItems[product.id].quantity);
-                                    const priceUnit = product.promo > 0
-                                        ? product.product_price * (1 - product.promo / 100)
-                                        : product.product_price;
+                                    const priceUnit = Number(product.promo) > 0
+                                        ? Number(product.product_price) * (1 - Number(product.promo) / 100)
+                                        : Number(product.product_price);
                                     const total = priceUnit * quantity;
 
                                     return (
