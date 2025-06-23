@@ -4,6 +4,7 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button'
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import Select from 'react-select';
 
 
 
@@ -104,17 +105,49 @@ function GestionStockPage() {
 
                 <Modal.Body>
                     <Form id="newsForm" onSubmit={handleSubmit}>
-                        <Form.Label>Produit</Form.Label>
-                        <Form.Select
-                            value={productId}
-                            onChange={(e) => setProductId(e.target.value)}
-                            required
-                        >
-                            <option value="">-- Choisir un produit --</option>
-                            {productList.map(item => (
-                                <option key={item.id} value={item.id}>{item.name} ({item.unit})</option>
-                            ))}
-                        </Form.Select>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label>Produit</Form.Label>
+                            <Select
+                                options={productList.map(item => ({
+                                    value: item.id,
+                                    label: item.name,
+                                    unit: item.unit,
+                                    image: item.image_url,
+                                }))}
+                                onChange={(selected) => setProductId(selected.value)}
+                                placeholder="-- Choisir un produit --"
+                                components={{
+                                    Option: ({ data, innerRef, innerProps }) => (
+                                        <div ref={innerRef} {...innerProps} className="d-flex align-items-center gap-2 p-2">
+                                            <img
+                                                src={data.image}
+                                                alt={data.label}
+                                                style={{ width: '30px', height: '30px', objectFit: 'cover', borderRadius: '6px' }}
+                                            />
+                                            <span>{data.label} ({data.unit})</span>
+                                        </div>
+                                    ),
+                                    SingleValue: ({ data }) => (
+                                        <div className="d-flex align-items-center gap-2">
+                                            <img
+                                                src={data.image}
+                                                alt={data.label}
+                                                style={{ width: '30px', height: '30px', objectFit: 'cover', borderRadius: '6px' }}
+                                            />
+                                            <span>{data.label} ({data.unit})</span>
+                                        </div>
+                                    ),
+                                }}
+                                styles={{
+                                    control: (provided) => ({
+                                        ...provided,
+                                        minHeight: '38px',
+                                    }),
+                                }}
+                            />
+                        </Form.Group>
+
 
                         <Form.Group className="mb-3">
                             <Form.Label>Quantité</Form.Label>
@@ -165,7 +198,18 @@ function GestionStockPage() {
             <tbody>
             {stockList.map((item, index) => (
                 <tr key={item.id}>
-                    <td>{item.id}</td>
+                    <td>
+                        <div className="d-flex align-items-center gap-2">
+                            {item.product_image_url && (
+                                <img
+                                    src={item.product_image_url}
+                                    alt={item.product_name}
+                                    style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
+                                />
+                            )}
+                        </div>
+                    </td>
+
                     <td>{item.product_name}</td>
                     <td>
                         <div className="d-flex align-items-center">

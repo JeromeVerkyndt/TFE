@@ -40,7 +40,7 @@ const softDeleteStock = (req, res) => {
 
 const getAllDataStock = (req, res) => {
     const sql = `
-        SELECT stock.*, products.name AS product_name, products.description As product_description, products.price As product_price, products.unit As product_unit
+        SELECT stock.*, products.name AS product_name, products.description As product_description, products.price As product_price, products.unit As product_unit, products.image_url As product_image_url
         FROM stock
         JOIN products ON stock.product_id = products.id
         WHERE stock.deleted = FALSE

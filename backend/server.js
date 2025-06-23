@@ -11,6 +11,7 @@ const newsRoutes = require('./routes/newsRoutes');
 const authRoutes = require('./routes/authRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const cookieParser = require('cookie-parser');
+const uploadRoutes = require("./routes/upload");
 
 
 const app = express();
@@ -74,6 +75,7 @@ app.use('/api/order-item', orderItemRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/transaction', transactionRoutes);
+app.use("/api/upload", uploadRoutes);
 
 
 // Démarrer le serveur

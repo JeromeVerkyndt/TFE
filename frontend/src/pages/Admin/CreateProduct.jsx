@@ -23,6 +23,13 @@ function CreateProduct() {
         e.preventDefault();
 
         try {
+
+            const imageData = new FormData();
+            imageData.append("image", formData.image);
+
+            const uploadRes = await axios.post("http://localhost:5001/api/upload", imageData); // port 3001 pour Cloudinary
+            const imageUrl = uploadRes.data.imageUrl;
+
             const response = await axios.post("http://localhost:5001/api/products", {
                 name: formData.name,
                 description: formData.description,
@@ -30,7 +37,7 @@ function CreateProduct() {
                 price: parseFloat(formData.price),
                 included_in_subscription: formData.includedInSubscription,
                 promo: null, // ou une valeur par défaut
-                image_url: null, // temporairement null
+                image_url: imageUrl,
             });
 
             console.log(response.data);
@@ -46,6 +53,18 @@ function CreateProduct() {
         <div className="container mt-4">
             <h2 className="mb-4">Créer un produit</h2>
             <form onSubmit={handleSubmit} className="p-4 border rounded bg-light">
+
+                <div className="mb-3">
+                    <label className="form-label">Image du produit</label>
+                    <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        className="form-control"
+                        onChange={handleChange}
+                        required
+                    />
+                </div>
 
                 <div className="mb-3">
                     <label className="form-label">Nom du produit</label>
