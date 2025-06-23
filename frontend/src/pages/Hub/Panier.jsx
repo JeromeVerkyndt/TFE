@@ -90,9 +90,26 @@ function ProductsPage() {
                 order_id: orderId
             });
 
+            // Diminution du stock après la création des order-items
+            const stockUpdateRequests = selectedProducts.map(product => {
+                const quantity = parseFloat(selectedItems[product.id].quantity);
+
+                // Ici product.id = ID du stock (et pas product_id = ID du produit)
+                return axios.put(`http://localhost:5001/api/stock/decrease/${product.id}`,
+                    { quantityToSubtract: quantity },
+                    { withCredentials: true }
+                );
+            });
+
+            await Promise.all(stockUpdateRequests);
+
+
             alert("Commande validée avec succès !");
             setShowModal(false);
-            setSelectedItems({}); 
+            setSelectedItems({});
+
+
+            navigate("/hub/user-selecte");
 
         } catch (error) {
             console.error("Erreur lors de la validation de la commande :", error);

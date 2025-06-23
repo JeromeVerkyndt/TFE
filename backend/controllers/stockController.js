@@ -72,10 +72,30 @@ const updateStockById = (req, res) => {
     });
 };
 
+const decreaseStockById = (req, res) => {
+    const { id } = req.params;
+    const { quantityToSubtract } = req.body;
+
+    const sql = `UPDATE stock SET quantity = quantity - ? WHERE id = ? AND quantity >= ?`;
+
+    req.db.query(sql, [quantityToSubtract, id, quantityToSubtract], (err, result) => {
+        if (err) {
+            console.error('Erreur lors de la mise à jour du stock :', err);
+            res.status(500).json({ error: 'Erreur serveur' });
+        } else if (result.affectedRows === 0) {
+            res.status(400).json({ error: 'Stock insuffisant ou produit non trouvé' });
+        } else {
+            res.status(200).json({ message: 'Stock diminué avec succès' });
+        }
+    });
+};
+
+
 module.exports = {
     getAllStock,
     createStock,
     softDeleteStock,
     getAllDataStock,
     updateStockById,
+    decreaseStockById,
 };
