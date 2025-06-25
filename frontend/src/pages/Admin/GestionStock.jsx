@@ -5,6 +5,8 @@ import Button from 'react-bootstrap/Button'
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import Select from 'react-select';
+import api from '../../api.js';
+
 
 
 
@@ -19,7 +21,7 @@ function GestionStockPage() {
     const handleShow = () => setShow(true);
 
     useEffect(() => {
-        axios.get('http://localhost:5001/api/stock/all_data')
+        api.get('/stock/all_data')
             .then(response => {
                 console.log(response.data)
                 setStockList(response.data);
@@ -30,7 +32,7 @@ function GestionStockPage() {
     }, []);
 
     useEffect(() => {
-        axios.get('http://localhost:5001/api/products')
+        api.get('/products')
             .then(response => {
                 console.log(response.data)
                 setProductList(response.data);
@@ -43,7 +45,7 @@ function GestionStockPage() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        axios.post('http://localhost:5001/api/stock', {
+        api.post('/stock', {
             product_id: productId,
             quantity: quantity,
             promo: promo
@@ -52,7 +54,7 @@ function GestionStockPage() {
                 alert("Stock ajouté !");
                 handleClose();
 
-                axios.get('http://localhost:5001/api/stock/all_data')
+                api.get('/stock/all_data')
                     .then(res => setStockList(res.data));
             })
             .catch(err => {
@@ -64,7 +66,7 @@ function GestionStockPage() {
     const handleSoftDelete = (id) => {
         if (!window.confirm("Es-tu sûr de vouloir supprimer cet élément ?")) return;
 
-        axios.delete(`http://localhost:5001/api/stock/${id}`)
+        api.delete(`/stock/${id}`)
             .then(() => {
                 setStockList(prev => prev.filter(item => item.id !== id)); // supprime visuellement
             })
@@ -74,7 +76,7 @@ function GestionStockPage() {
     };
 
     const handleUpdate = (id, quantity, promo) => {
-        axios.put(`http://localhost:5001/api/stock/update/${id}`, {
+        api.put(`/stock/update/${id}`, {
             quantity,
             promo
         })

@@ -4,6 +4,8 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import Accordion from 'react-bootstrap/Accordion';
+import api from '../../api.js';
+
 
 
 
@@ -23,7 +25,7 @@ function CreateInformationPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5001/api/news', {
+            const res = await api.post('/news', {
                 title,
                 text,
             });
@@ -38,7 +40,7 @@ function CreateInformationPage() {
 
 
     useEffect(() => {
-        axios.get('http://localhost:5001/api/news') // remplace l'URL selon ton backend
+        api.get('/news') // remplace l'URL selon ton backend
             .then(response => {
                 setNews(response.data);
             })

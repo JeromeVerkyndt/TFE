@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Form, ListGroup, InputGroup, FormCheck, Button, Modal } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from '../../api.js';
+
 
 
 
@@ -14,7 +16,7 @@ function ProductsPage() {
     const client = location.state?.client;
 
     useEffect(() => {
-        axios.get("http://localhost:5001/api/stock/all_data")
+        api.get("/stock/all_data")
             .then(response => {
                 setProducts(response.data);
             })
@@ -64,7 +66,7 @@ function ProductsPage() {
                 return acc + quantity * priceUnit;
             }, 0);
 
-            const orderResponse = await axios.post("http://localhost:5001/api/order/create", {
+            const orderResponse = await api.post("/order/create", {
                 user_id: client.id
             });
             const orderId = orderResponse.data.id;
@@ -73,7 +75,7 @@ function ProductsPage() {
                 const quantity = parseFloat(selectedItems[product.id].quantity);
                 const promo = product.promo > 0 ? product.promo : 0;
 
-                return axios.post("http://localhost:5001/api/order-item/create", {
+                return api.post("/order-item/create", {
                     order_id: orderId,
                     product_id: product.product_id,
                     quantity,
@@ -83,7 +85,7 @@ function ProductsPage() {
 
             await Promise.all(orderItemRequests);
 
-            await axios.post("http://localhost:5001/api/transaction/create", {
+            await api.post("/transaction/create", {
                 user_id: client.id,
                 amount: totalAmount,
                 type: "commande",
@@ -95,7 +97,7 @@ function ProductsPage() {
                 const quantity = parseFloat(selectedItems[product.id].quantity);
 
                 // Ici product.id = ID du stock (et pas product_id = ID du produit)
-                return axios.put(`http://localhost:5001/api/stock/decrease/${product.id}`,
+                return api.put(`/stock/decrease/${product.id}`,
                     { quantityToSubtract: quantity },
                     { withCredentials: true }
                 );

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import api from '../../api.js';
+
 
 function CreateProduct() {
     const [formData, setFormData] = useState({
@@ -27,10 +29,10 @@ function CreateProduct() {
             const imageData = new FormData();
             imageData.append("image", formData.image);
 
-            const uploadRes = await axios.post("http://localhost:5001/api/upload", imageData); // port 3001 pour Cloudinary
+            const uploadRes = await api.post("/upload", imageData); // port 3001 pour Cloudinary
             const imageUrl = uploadRes.data.imageUrl;
 
-            const response = await axios.post("http://localhost:5001/api/products", {
+            const response = await api.post("/products", {
                 name: formData.name,
                 description: formData.description,
                 unit: formData.unit,
@@ -91,7 +93,7 @@ function CreateProduct() {
                 </div>
 
                 <div className="mb-3">
-                    <label className="form-label">Unité</label>
+                    <label className="form-label">Unité (exemple: kg)</label>
                     <input
                         type="text"
                         name="unit"

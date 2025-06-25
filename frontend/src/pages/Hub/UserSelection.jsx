@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from '../../api.js';
 
 
 
@@ -16,7 +17,7 @@ function UsersSelectePage() {
 
 
     useEffect(() => {
-        axios.get("http://localhost:5001/api/user/clients")
+        api.get("/user/clients")
             .then(response => {
                 setUsers(response.data);
             })

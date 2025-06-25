@@ -5,6 +5,8 @@ import CardTitle from "react-bootstrap/CardTitle";
 import Form from "react-bootstrap/Form";
 import {Link} from "react-router-dom";
 import Button from "react-bootstrap/Button";
+import api from '../api.js';
+
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -24,7 +26,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post("http://localhost:5001/api/auth/register", formData);
+            await api.post("/auth/register", formData);
             alert("Compte créé !");
         } catch (err) {
             console.error(err);

@@ -7,6 +7,8 @@ import Card from 'react-bootstrap/Card';
 import CardHeader from 'react-bootstrap/CardHeader'
 import CardTitle from 'react-bootstrap/CardTitle'
 import { Link } from 'react-router-dom';
+import api from '../api.js';
+
 
 axios.defaults.withCredentials = true;
 
@@ -20,7 +22,7 @@ const Login = () => {
         e.preventDefault();
         setMsg('');
         try {
-            const res = await axios.post('http://localhost:5001/api/auth/login', {
+            const res = await api.post('/auth/login', {
                 email,
                 password
             });

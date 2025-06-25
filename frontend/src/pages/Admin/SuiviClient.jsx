@@ -5,6 +5,8 @@ import Button from 'react-bootstrap/Button'
 import Modal from "react-bootstrap/Modal";
 import Collapse from 'react-bootstrap/Collapse';
 import Form from "react-bootstrap/Form";
+import api from '../../api.js';
+
 
 
 
@@ -27,7 +29,7 @@ function SuiviClientPage() {
             setOpenCollapseId(transactionId);
 
             if (!orderItems[orderId]) {
-                axios.get(`http://localhost:5001/api/order-item/order/${orderId}`)
+                api.get(`/order-item/order/${orderId}`)
                     .then((response) => {
                         setOrderItems(prev => ({
                             ...prev,
@@ -45,7 +47,7 @@ function SuiviClientPage() {
 
 
     useEffect(() => {
-        axios.get('http://localhost:5001/api/user')
+        api.get('/user')
             .then(response => {
                 console.log(response.data)
                 setUserList(response.data);
@@ -56,7 +58,7 @@ function SuiviClientPage() {
     }, []);
 
     const balanceUpdate = (id, balance, extra_balance) => {
-        axios.put(`http://localhost:5001/api/user/update/${id}`, {
+        api.put(`/user/update/${id}`, {
             balance,
             extra_balance
         })
@@ -78,7 +80,7 @@ function SuiviClientPage() {
     };
 
     const fetchTransactions = (userId) => {
-        axios.get(`http://localhost:5001/api/transaction/user/${userId}`)
+        api.get(`/transaction/user/${userId}`)
             .then(response => {
                 setTransactions(response.data);
                 setShowTransactionModal(true);
