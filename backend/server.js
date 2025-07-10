@@ -1,7 +1,10 @@
 // backend/server.js
+require('dotenv').config();
+
 const cors = require('cors');
 const express = require('express');
 const mysql = require('mysql2');
+const cookieParser = require('cookie-parser');
 const productRoutes = require('./routes/productRoutes');
 const stockRoutes = require('./routes/stockRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -10,21 +13,18 @@ const orderItemRoutes = require('./routes/orderItemRoutes');
 const newsRoutes = require('./routes/newsRoutes');
 const authRoutes = require('./routes/authRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
-const cookieParser = require('cookie-parser');
 const uploadRoutes = require("./routes/upload");
 
 
 const app = express();
-const port = 5001;
+const port = process.env.BACKEND_PORT;
 
-//auth
-require('dotenv').config();
 
 app.use(cookieParser());
 
 
 app.use(cors({
-    origin: 'http://localhost:5173',  // ton frontend
+    origin: process.env.FRONTEND_URL,  // ton frontend
     credentials: true                // autorise l'envoi de cookies/headers auth
 }));
 
@@ -35,11 +35,11 @@ app.use(express.urlencoded({ extended: true }));  // Pour parser les données UR
 
 // Connexion à la base de données
 const db = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: 'Test1234',  
-    database: 'tfe_panier'
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
 });
 
 db.connect(err => {
