@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import useAuth from './hooks/useAuth';
 
-import Home from './pages/Home';
-import Test from './pages/Test';
+import Home from './pages/home';
+import Test from './pages/test';
 import CreateProduct from "./pages/Admin/CreateProduct.jsx";
 import ProductsPage from "./pages/Hub/Panier.jsx";
 import Navbar from "./components/Navbar";
