@@ -6,7 +6,7 @@ function NavbarHub() {
 
     const handleLogout = async () => {
         try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {}, { withCredentials: true });
+            await axios.post(`${import.meta.env.VITE_API_URL}/auth/logout`, {}, { withCredentials: true });
             navigate('/login');
         } catch (err) {
             console.error("Erreur lors de la déconnexion :", err);
