@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, ListGroup, InputGroup, FormCheck, Button, Modal } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -146,6 +146,17 @@ function ProductsPage() {
                 <ListGroup>
                     {products.map(product => (
                         <ListGroup.Item key={product.id} className="d-flex justify-content-between align-items-center">
+
+                            <div className="d-flex align-items-center gap-2">
+                                {product.product_image_url && (
+                                    <img
+                                        src={product.product_image_url}
+                                        alt={product.product_name}
+                                        style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
+                                    />
+                                )}
+                            </div>
+
                             <div style={{ maxWidth: '500%', marginRight: '10px' }}>
                                 <h4>{product.product_name}</h4> (Stock: {product.quantity} {product.product_unit})
                             </div>
@@ -202,7 +213,7 @@ function ProductsPage() {
     {/* MODALE DU TICKET */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Ticket de collecte</Modal.Title>
+                    <Modal.Title>Ticket du panier</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {selectedProducts.length === 0 ? (
