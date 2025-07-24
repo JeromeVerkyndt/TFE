@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 import useAuth from './hooks/useAuth';
 
 import Home from './pages/home';
 import Test from './pages/test';
+import News from "./pages/User/News.jsx";
 import CreateProduct from "./pages/Admin/CreateProduct.jsx";
 import ProductsPage from "./pages/Hub/Panier.jsx";
 import Navbar from "./components/Navbar";
@@ -18,7 +18,6 @@ import Register from "./pages/Register";
 import PrivateRoute from './components/PrivateRoute';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { useLayoutEffect } from "react";
 
 function AppContent() {
     const location = useLocation();
@@ -39,6 +38,7 @@ function AppContent() {
 
                     <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
                     <Route path="/test" element={<PrivateRoute><Test /></PrivateRoute>} />
+                    <Route path="/news" element={<PrivateRoute><News /></PrivateRoute>} />
                     <Route path="/hub/panier" element={<PrivateRoute><ProductsPage /></PrivateRoute>} />
                     <Route path="/create-product" element={<PrivateRoute><CreateProduct /></PrivateRoute>} />
                     <Route path="/create-inforamtion" element={<PrivateRoute><CreateInformationPage /></PrivateRoute>} />
