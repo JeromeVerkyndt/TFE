@@ -233,31 +233,69 @@ function SuiviClientPage() {
                                                         <strong>Détails de la commande</strong>
                                                         <hr />
                                                         {orderItems[transaction.order_id] ? (
-                                                            <ul className="list-group">
-                                                                {orderItems[transaction.order_id].map((item) => (
-                                                                    <li
-                                                                        key={item.id}
-                                                                        className="list-group-item d-flex justify-content-between align-items-center"
-                                                                    >
-                                                                        <div>
-                                                                            {item.name} — {item.quantity} {item.unit} X {item.price} €
-                                                                            {item.promo > 0 && (
-                                                                                <span className="ms-2 text-success">(-{item.promo}% promo)</span>
-                                                                            )}
-                                                                        </div>
-                                                                        <div>
-                                                                            <strong>
-                                                                                {(
-                                                                                    item.quantity *
-                                                                                    item.price *
-                                                                                    (1 - item.promo / 100)
-                                                                                ).toFixed(2)}{" "}
-                                                                                €
-                                                                            </strong>
-                                                                        </div>
-                                                                    </li>
-                                                                ))}
-                                                            </ul>
+                                                            <>
+                                                                <ul className="list-group">
+                                                                    {orderItems[transaction.order_id]
+                                                                        .filter((item) => item.included_in_subscription === 1)
+                                                                        .map((item) => (
+                                                                        <li
+                                                                            key={item.id}
+                                                                            className="list-group-item d-flex justify-content-between align-items-center"
+                                                                        >
+                                                                            <div>
+                                                                                {item.name} — {item.quantity} {item.unit} X {item.price} €
+                                                                                {item.promo > 0 && (
+                                                                                    <span className="ms-2 text-success">(-{item.promo}% promo)</span>
+                                                                                )}
+                                                                            </div>
+                                                                            <div>
+                                                                                <span className="ms-2 text-success">Abonnement</span>
+                                                                            </div>
+                                                                            <div>
+                                                                                <strong>
+                                                                                    {(
+                                                                                        item.quantity *
+                                                                                        item.price *
+                                                                                        (1 - item.promo / 100)
+                                                                                    ).toFixed(2)}{" "}
+                                                                                    €
+                                                                                </strong>
+                                                                            </div>
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+
+                                                                <ul className="list-group">
+                                                                    {orderItems[transaction.order_id]
+                                                                        .filter((item) => item.included_in_subscription === 0)
+                                                                        .map((item) => (
+                                                                            <li
+                                                                                key={item.id}
+                                                                                className="list-group-item d-flex justify-content-between align-items-center"
+                                                                            >
+                                                                                <div>
+                                                                                    {item.name} — {item.quantity} {item.unit} X {item.price} €
+                                                                                    {item.promo > 0 && (
+                                                                                        <span className="ms-2 text-success">(-{item.promo}% promo)</span>
+                                                                                    )}
+                                                                                </div>
+                                                                                <div>
+                                                                                    <span className="ms-2 text-secondary">Hors abonnement</span>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <strong>
+                                                                                        {(
+                                                                                            item.quantity *
+                                                                                            item.price *
+                                                                                            (1 - item.promo / 100)
+                                                                                        ).toFixed(2)}{" "}
+                                                                                        €
+                                                                                    </strong>
+                                                                                </div>
+                                                                            </li>
+                                                                        ))}
+                                                                </ul>
+                                                            </>
                                                         ) : (
                                                             <p>Chargement des détails...</p>
                                                         )}

@@ -30,14 +30,31 @@ function ProductsPage() {
     }
 
     const handleQuantityChange = (productId, value) => {
+        let numericValue = parseFloat(value);
+
+        const product = products.find(p => p.id === productId);
+        if (!product) return;
+
+        const max = product.quantity;
+
+        if (isNaN(numericValue) || numericValue < 0) {
+            numericValue = 0; 
+        }
+
+        if (numericValue > max) {
+            numericValue = max;
+        }
+
         setSelectedItems(prev => ({
             ...prev,
             [productId]: {
                 ...prev[productId],
-                quantity: value
+                quantity: numericValue
             }
         }));
     };
+
+
 
     const handleCheckboxChange = (productId, isChecked) => {
         setSelectedItems(prev => ({
@@ -220,6 +237,7 @@ function ProductsPage() {
                                 <Form.Control
                                     type="number"
                                     min={0}
+                                    max={product.quantity}
                                     value={selectedItems[product.id]?.quantity || ""}
                                     onChange={(e) => handleQuantityChange(product.id, e.target.value)}
                                 />

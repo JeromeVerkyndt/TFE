@@ -1,5 +1,5 @@
 const getAllStock = (req, res) => {
-    const sql = `SELECT * FROM stock WHERE deleted = FALSE`;
+    const sql = `SELECT * FROM stock WHERE deleted = FALSE and quantity >= 0`;
 
     req.db.query(sql, (err, results) => {
         if (err) {

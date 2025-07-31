@@ -47,7 +47,8 @@ const getAllOrderItems = (req, res) => {
 const getOrderItemsByOrderId = (req, res) => {
     const { order_id } = req.params;
     const sql = `
-        SELECT * FROM order_items
+        SELECT order_items.*, products.name AS name, products.description As description, products.unit As unit
+        FROM order_items
         JOIN products ON order_items.product_id = products.id
         WHERE order_id = ? AND order_items.deleted = FALSE
     `;
