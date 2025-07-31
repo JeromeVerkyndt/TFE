@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, ListGroup, InputGroup, FormCheck, Button, Modal } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import api from '../../api.js';
 
 
@@ -66,6 +65,28 @@ function ProductsPage() {
                 return acc + quantity * priceUnit;
             }, 0);
 
+            const totalIncluded = selectedProducts.reduce((acc, product) => {
+                if (product.included === 1) {
+                    const quantity = parseFloat(selectedItems[product.id].quantity);
+                    const priceUnit = product.promo > 0
+                        ? product.product_price * (1 - product.promo / 100)
+                        : product.product_price;
+                    return acc + quantity * priceUnit;
+                }
+                return acc;
+            }, 0);
+
+            const totalNotIncluded = selectedProducts.reduce((acc, product) => {
+                if (product.included !== 1) {
+                    const quantity = parseFloat(selectedItems[product.id].quantity);
+                    const priceUnit = product.promo > 0
+                        ? product.product_price * (1 - product.promo / 100)
+                        : product.product_price;
+                    return acc + quantity * priceUnit;
+                }
+                return acc;
+            }, 0);
+
             const orderResponse = await api.post("/order/create", {
                 user_id: client.id
             });
@@ -79,7 +100,9 @@ function ProductsPage() {
                     order_id: orderId,
                     product_id: product.product_id,
                     quantity,
-                    promo
+                    promo,
+                    price: product.product_price,
+                    included_in_subscription: product.included,
                 });
             });
 
@@ -91,6 +114,14 @@ function ProductsPage() {
                 type: "commande",
                 order_id: orderId
             });
+
+            await api.put(`/user/update/subtract/${client.id}`, {
+                amount: totalIncluded
+            });
+
+            await api.put(`/user/update/subtract/balance/extra/${client.id}`, {
+                amount: totalNotIncluded,
+            })
 
             // Diminution du stock après la création des order-items
             const stockUpdateRequests = selectedProducts.map(product => {
@@ -143,8 +174,14 @@ function ProductsPage() {
             <h2>Liste des produits {client.first_name}</h2>
 
             <Form>
+                <ListGroup.Item variant="success" className="text-center">
+                    <strong>Produits abonnement</strong>
+                </ListGroup.Item>
+
                 <ListGroup>
-                    {products.map(product => (
+                    {products
+                        .filter(product => product.included === 1)
+                        .map(product => (
                         <ListGroup.Item key={product.id} className="d-flex justify-content-between align-items-center">
 
                             <div className="d-flex align-items-center gap-2">
@@ -200,6 +237,70 @@ function ProductsPage() {
                         </ListGroup.Item>
                     ))}
                 </ListGroup>
+
+                <ListGroup.Item variant="secondary" className="text-center">
+                    <strong>Produits hors abonnement</strong>
+                </ListGroup.Item>
+
+                <ListGroup>
+                    {products
+                        .filter(product => product.included === 0)
+                        .map(product => (
+                            <ListGroup.Item key={product.id} className="d-flex justify-content-between align-items-center">
+
+                                <div className="d-flex align-items-center gap-2">
+                                    {product.product_image_url && (
+                                        <img
+                                            src={product.product_image_url}
+                                            alt={product.product_name}
+                                            style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
+                                        />
+                                    )}
+                                </div>
+
+                                <div style={{ maxWidth: '500%', marginRight: '10px' }}>
+                                    <h4>{product.product_name}</h4> (Stock: {product.quantity} {product.product_unit})
+                                </div>
+
+                                <div style={{ margin: '0 10px' }}>
+                                    {product.promo > 0 ? (
+                                        <div>
+                                            <h4 style={{ marginBottom: 0, color: '#dc2626' }}>
+                                                {product.product_price * (1 - product.promo / 100).toFixed(2)} €/{product.product_unit}
+                                            </h4>
+                                            <small>
+                                                <s style={{ color: '#6b7280' }}>{product.product_price} €</s>{' '}
+                                                <span style={{ color: '#16a34a' }}>-{product.promo}%</span>
+                                            </small>
+                                        </div>
+                                    ) : (
+                                        <h4>
+                                            {product.product_price} € / {product.product_unit}
+                                        </h4>
+                                    )}
+                                </div>
+
+                                <InputGroup style={{ width: "150px", marginLeft: 'auto', marginRight: "15px" }}>
+                                    <Form.Control
+                                        type="number"
+                                        min={0}
+                                        value={selectedItems[product.id]?.quantity || ""}
+                                        onChange={(e) => handleQuantityChange(product.id, e.target.value)}
+                                    />
+                                    <InputGroup.Text>{product.product_unit}</InputGroup.Text>
+                                </InputGroup>
+
+                                <Form.Label style={{marginTop: 'auto', marginBottom: "auto"}}> Ajouter: </Form.Label>
+                                <FormCheck
+                                    style={{marginTop: 'auto', marginBottom: "auto"}}
+                                    type="checkbox"
+                                    className="big-checkbox"
+                                    checked={selectedItems[product.id]?.selected || false}
+                                    onChange={(e) => handleCheckboxChange(product.id, e.target.checked)}
+                                />
+                            </ListGroup.Item>
+                        ))}
+                </ListGroup>
             </Form>
 
 
@@ -220,8 +321,10 @@ function ProductsPage() {
                         <p>Aucun produit sélectionné.</p>
                     ) : (
                         <>
+                            {/* Produits Abonnement */}
+                            <h5 className="text-success text-center mb-3">Produits abonnement</h5>
                             <ul>
-                                {selectedProducts.map(product => {
+                                {selectedProducts.filter(p => p.included === 1).map(product => {
                                     const quantity = parseFloat(selectedItems[product.id].quantity);
                                     const priceUnit = Number(product.promo) > 0
                                         ? Number(product.product_price) * (1 - Number(product.promo) / 100)
@@ -238,6 +341,28 @@ function ProductsPage() {
                                     );
                                 })}
                             </ul>
+
+                            {/* Produits Hors Abonnement */}
+                            <h5 className="text-secondary text-center mt-4 mb-3">Produits hors abonnement</h5>
+                            <ul>
+                                {selectedProducts.filter(p => p.included === 0).map(product => {
+                                    const quantity = parseFloat(selectedItems[product.id].quantity);
+                                    const priceUnit = Number(product.promo) > 0
+                                        ? Number(product.product_price) * (1 - Number(product.promo) / 100)
+                                        : Number(product.product_price);
+                                    const total = priceUnit * quantity;
+
+                                    return (
+                                        <li key={product.id}>
+                                            <strong>{product.product_name}</strong> — {quantity} {product.product_unit} × {priceUnit.toFixed(2)} € = <strong>{total.toFixed(2)} €</strong>
+                                            {product.promo > 0 && (
+                                                <span style={{ color: '#16a34a', marginLeft: '8px' }}>(-{product.promo}%)</span>
+                                            )}
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+
                             <hr />
                             <h5 className="text-end">
                                 Total :{" "}
@@ -253,6 +378,7 @@ function ProductsPage() {
                         </>
                     )}
                 </Modal.Body>
+
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setShowModal(false)}>
                         Fermer

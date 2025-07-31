@@ -1,13 +1,13 @@
 const createOrderItem = (req, res) => {
-    let { order_id, product_id, quantity, promo } = req.body;
+    let { order_id, product_id, quantity, promo, price, included_in_subscription } = req.body;
     if (promo === undefined || promo === null || promo === '') {
         promo = 0;
     }
     const sql = `
-        INSERT INTO order_items (order_id, product_id, quantity, promo, created_at)
-        VALUES (?, ?, ?, ?, NOW())
+        INSERT INTO order_items (order_id, product_id, quantity, promo, created_at, price, included_in_subscription)
+        VALUES (?, ?, ?, ?, NOW(), ?, ?)
     `;
-    req.db.query(sql, [order_id, product_id, quantity, promo], (err, result) => {
+    req.db.query(sql, [order_id, product_id, quantity, promo, price, included_in_subscription], (err, result) => {
         if (err) {
             console.error('Error creating order_item:', err);
             return res.status(500).json({ error: 'Server error' });
@@ -15,6 +15,7 @@ const createOrderItem = (req, res) => {
         res.status(201).json({ message: 'Order item created successfully', id: result.insertId });
     });
 };
+
 
 const softDeleteOrderItem = (req, res) => {
     const { id } = req.params;

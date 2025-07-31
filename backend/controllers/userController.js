@@ -84,11 +84,82 @@ const updateUserById = (req, res) => {
     });
 };
 
+const subtractFromUserBalance = (req, res) => {
+    const { id } = req.params;
+    const { amount } = req.body;
+
+    if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+        return res.status(400).json({ error: 'Montant invalide' });
+    }
+
+    const getUserSql = `SELECT balance FROM user WHERE id = ? AND deleted = false`;
+    req.db.query(getUserSql, [id], (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la récupération du solde :', err);
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+
+        const currentBalance = parseFloat(results[0].balance);
+        const newBalance = currentBalance - amount;
+
+        const updateSql = `UPDATE user SET balance = ? WHERE id = ?`;
+        req.db.query(updateSql, [newBalance, id], (updateErr) => {
+            if (updateErr) {
+                console.error('Erreur lors de la mise à jour du solde :', updateErr);
+                return res.status(500).json({ error: 'Erreur serveur' });
+            }
+
+            res.status(200).json({ message: 'Solde mis à jour', newBalance });
+        });
+    });
+};
+
+const subtractFromUserExtraBalance = (req, res) => {
+    const { id } = req.params;
+    const { amount } = req.body;
+
+    if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+        return res.status(400).json({ error: 'Montant invalide' });
+    }
+
+    const getUserSql = `SELECT extra_balance FROM user WHERE id = ? AND deleted = false`;
+    req.db.query(getUserSql, [id], (err, results) => {
+        if (err) {
+            console.error('Erreur lors de la récupération du solde :', err);
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+
+        const currentBalance = parseFloat(results[0].extra_balance);
+        const newBalance = currentBalance - amount;
+
+        const updateSql = `UPDATE user SET extra_balance = ? WHERE id = ?`;
+        req.db.query(updateSql, [newBalance, id], (updateErr) => {
+            if (updateErr) {
+                console.error('Erreur lors de la mise à jour du solde :', updateErr);
+                return res.status(500).json({ error: 'Erreur serveur' });
+            }
+
+            res.status(200).json({ message: 'Solde mis à jour', newBalance });
+        });
+    });
+};
+
+
 module.exports = {
     softDeleteUser,
     getAllUsers,
     getUserById,
     updateUserById,
     getAllClients,
+    subtractFromUserBalance,
+    subtractFromUserExtraBalance,
 };
 
