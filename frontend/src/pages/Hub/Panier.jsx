@@ -38,7 +38,7 @@ function ProductsPage() {
         const max = product.quantity;
 
         if (isNaN(numericValue) || numericValue < 0) {
-            numericValue = 0; 
+            numericValue = 0;
         }
 
         if (numericValue > max) {

@@ -22,6 +22,14 @@ function SuiviClientPage() {
     const [openCollapseId, setOpenCollapseId] = useState(null);
     const [orderItems, setOrderItems] = useState({});
 
+    const [showFormModal, setShowFormModal] = useState(false);
+    const [formData, setFormData] = useState({
+        number: '',
+        checkbox: false,
+        textarea: ''
+    });
+
+
     const toggleCollapse = (transactionId, orderId) => {
         if (openCollapseId === transactionId) {
             setOpenCollapseId(null);
@@ -43,7 +51,32 @@ function SuiviClientPage() {
         }
     };
 
+    const handleAddTransaction = async () => {
+        if (!selectedUser) return;
 
+        const payload = {
+            id: selectedUser.id,
+            amount: parseFloat(formData.number),
+            comment: formData.textarea
+        };
+
+        try {
+            if (formData.checkbox) {
+                await api.put(`user/update/balance/extra/${selectedUser.id}`, {amount: parseFloat(formData.number), comment: formData.textarea});
+                await api.post(`transaction/create/`, {user_id: selectedUser.id, amount: parseFloat(formData.number), type:"Payment extra", order_id: null});
+            } else {
+                await api.put(`user/update/balance/${selectedUser.id}`, {amount: parseFloat(formData.number), comment: formData.textarea});
+                await api.post(`transaction/create/`, {user_id: selectedUser.id, amount: parseFloat(formData.number), type:"Payment", order_id: null});
+
+            }
+
+            alert('Transaction enregistrée avec succès !');
+            setShowFormModal(false);
+        } catch (error) {
+            console.error("Erreur lors de l'envoi :", error);
+            alert("Erreur lors de l'envoi du formulaire.");
+        }
+    }
 
 
     useEffect(() => {
@@ -162,6 +195,19 @@ function SuiviClientPage() {
                                     <i className="bi bi-envelope-arrow-up"></i>
                                 </Button>
 
+                                <Button
+                                    variant="secondary"
+                                    className="me-2"
+                                    onClick={() => {
+                                        setSelectedUser(item);
+                                        setFormData({ number: '', checkbox: false, textarea: '' });
+                                        setShowFormModal(true);
+                                    }}
+                                >
+                                    <i className="bi bi-ui-checks"></i>
+                                </Button>
+
+
                                 <Button className="me-2" variant="info" onClick={() => {
                                     setSelectedUser(item);
                                     fetchTransactions(item.id);
@@ -178,6 +224,59 @@ function SuiviClientPage() {
                     ))}
                     </tbody>
                 </Table>
+
+            {/* Modal ajouter transactions */}
+            <Modal
+                show={showFormModal}
+                onHide={() => setShowFormModal(false)}
+                centered
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Formulaire – {selectedUser?.first_name} {selectedUser?.last_name}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3" controlId="formNumber">
+                            <Form.Label>Montant</Form.Label>
+                            <Form.Control
+                                type="number"
+                                step="0.01"
+                                value={formData.number}
+                                onChange={(e) => setFormData({ ...formData, number: e.target.value })}
+                                placeholder="0.00"
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formCheckbox">
+                            <Form.Check
+                                type="checkbox"
+                                label="Cocher si applicable"
+                                checked={formData.checkbox}
+                                onChange={(e) => setFormData({ ...formData, checkbox: e.target.checked })}
+                            />
+                        </Form.Group>
+
+                        <Form.Group className="mb-3" controlId="formTextarea">
+                            <Form.Label>Commentaire</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                value={formData.textarea}
+                                onChange={(e) => setFormData({ ...formData, textarea: e.target.value })}
+                                placeholder="Ajouter un commentaire..."
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowFormModal(false)}>
+                        Annuler
+                    </Button>
+                    <Button variant="primary" onClick={handleAddTransaction}>
+                        Valider
+                    </Button>
+                </Modal.Footer>
+            </Modal>
 
 
             {/* Modal avec l'historique des transactions */}
