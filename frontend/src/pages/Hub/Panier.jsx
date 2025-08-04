@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, ListGroup, InputGroup, FormCheck, Button, Modal } from "react-bootstrap";
+import { Form, ListGroup, InputGroup, FormCheck, Button, Modal, Card } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from '../../api.js';
 
@@ -188,8 +188,42 @@ function ProductsPage() {
         </style>
 
         <div className="container-fluid">
-            <h2>Liste des produits {client.first_name}</h2>
+            <h2>Panier</h2>
 
+            <Card className="mb-5 w-25">
+                <Card.Header>
+                    <h4>Portefeuille de: {client.first_name} {client.last_name}</h4>
+                </Card.Header>
+                <Card.Body>
+                    <div className="d-flex justify-content-between">
+                        <div>
+                            <strong style={{ fontSize: "1.2rem" }}>Solde: </strong>
+                            <span style={{ fontSize: "1.2rem" }} className={
+                                client.balance < 0
+                                    ? "text-danger"
+                                    : client.balance > 0
+                                        ? "text-success"
+                                        : ""
+                            }>{client.balance}€</span>
+                        </div>
+                        <div>
+                            <strong style={{ fontSize: "1.2rem" }}>Solde extra: </strong>
+                            <span style={{ fontSize: "1.2rem" }} className={
+                                client.extra_balance < 0
+                                    ? "text-danger"
+                                    : client.extra_balance > 0
+                                        ? "text-success"
+                                        : ""
+                            }>{client.extra_balance}€</span>
+                        </div>
+                        <div>
+
+                        </div>
+                    </div>
+                </Card.Body>
+            </Card>
+
+            <Card>
             <Form>
                 <ListGroup.Item variant="success" className="text-center">
                     <strong>Produits abonnement</strong>
@@ -320,13 +354,13 @@ function ProductsPage() {
                         ))}
                 </ListGroup>
             </Form>
+            </Card>
 
-
-        <div className="mt-4 d-flex justify-content-end">
-            <Button variant="success" onClick={() => setShowModal(true)}>
-                Voir le ticket
-            </Button>
-        </div>
+            <div className="mt-4 d-flex justify-content-end">
+                <Button variant="success" onClick={() => setShowModal(true)}>
+                    Voir le ticket
+                </Button>
+            </div>
         </div>
 
     {/* MODALE DU TICKET */}
