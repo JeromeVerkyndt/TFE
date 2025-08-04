@@ -43,6 +43,7 @@ const getAllNews = (req, res) => {
             if (!newsMap[row.id]) {
                 newsMap[row.id] = {
                     id: row.id,
+                    created_at: row.created_at,
                     title: row.title,
                     text: row.text,
                     images: []

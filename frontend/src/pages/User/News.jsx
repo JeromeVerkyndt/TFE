@@ -45,7 +45,10 @@ function NewsPage() {
             {news.map(item => (
                 <Card key={item.id} className="mb-4 shadow-sm">
                     <Card.Body>
-                        <Card.Title>{item.title}</Card.Title>
+                        <div className="d-flex justify-content-between align-items-start">
+                            <Card.Title style={{fontSize: '1.5rem', fontWeight: 'bold'}}>{item.title}</Card.Title>
+                            <small className="text-muted">{new Date(item.created_at).toLocaleDateString()}</small>
+                        </div>
 
                         {item.images && item.images.length > 0 && (
                             <Row className="mb-3 g-2">
