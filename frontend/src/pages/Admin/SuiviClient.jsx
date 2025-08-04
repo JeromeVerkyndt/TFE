@@ -72,6 +72,7 @@ function SuiviClientPage() {
 
             alert('Transaction enregistrée avec succès !');
             setShowFormModal(false);
+            window.location.reload();
         } catch (error) {
             console.error("Erreur lors de l'envoi :", error);
             alert("Erreur lors de l'envoi du formulaire.");
@@ -149,43 +150,34 @@ function SuiviClientPage() {
                             <td>{item.subscriptions_id}</td>
                             <td>
                                 <div className="d-flex align-items-center">
-                                    <input
-                                        type="number"
-                                        className="form-control bg-white text-dark "
-                                        style={{ width: "11ch" }}
-                                        value={item.balance}
-                                        onChange={(e) => handleInputChange(index, "balance", e.target.value)}
-
-                                    />
-                                    <span>€</span>
+                                    <span className={
+                                        item.balance < 0
+                                            ? "text-danger"
+                                            : item.balance > 0
+                                                ? "text-success"
+                                                : ""
+                                    }>{item.balance}€</span>
                                 </div>
                             </td>
                             <td>
                                 <div className="d-flex align-items-center">
-                                    <input
-                                        type="number"
-                                        className="form-control bg-white text-dark"
-                                        style={{ width: "11ch" }}
-                                        value={item.extra_balance}
-                                        onChange={(e) => handleInputChange(index, "extra_balance", e.target.value)}
-
-                                    />
-                                    <span>€</span>
+                                    <span className={
+                                                       item.balance < 0
+                                                           ? "text-danger"
+                                                           : item.balance > 0
+                                                               ? "text-success"
+                                                               : ""
+                                    }>{item.extra_balance}€</span>
                                 </div>
                             </td>
                             <td>
                                 <Button
-                                    variant={modifiedRows[item.id] ? "warning" : "success"}
+                                    variant="warning"
                                     className="me-2"
                                     onClick={() => {
-                                        balanceUpdate(item.id, item.balance, item.extra_balance);
-
-                                        // Réinitialise la couleur
-                                        setModifiedRows(prev => {
-                                            const newState = { ...prev };
-                                            delete newState[item.id];
-                                            return newState;
-                                        });
+                                        setSelectedUser(item);
+                                        setFormData({ number: '', checkbox: false, textarea: '' });
+                                        setShowFormModal(true);
                                     }}
                                 >
                                     <i className="bi bi-pencil-square"></i>
@@ -194,19 +186,6 @@ function SuiviClientPage() {
                                 <Button variant="primary" className="me-2">
                                     <i className="bi bi-envelope-arrow-up"></i>
                                 </Button>
-
-                                <Button
-                                    variant="secondary"
-                                    className="me-2"
-                                    onClick={() => {
-                                        setSelectedUser(item);
-                                        setFormData({ number: '', checkbox: false, textarea: '' });
-                                        setShowFormModal(true);
-                                    }}
-                                >
-                                    <i className="bi bi-ui-checks"></i>
-                                </Button>
-
 
                                 <Button className="me-2" variant="info" onClick={() => {
                                     setSelectedUser(item);
@@ -232,12 +211,21 @@ function SuiviClientPage() {
                 centered
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Formulaire – {selectedUser?.first_name} {selectedUser?.last_name}</Modal.Title>
+                    <Modal.Title>Création de payment – {selectedUser?.first_name} {selectedUser?.last_name}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
+                        <Form.Group className="mb-3" controlId="formCheckbox">
+                            <Form.Check
+                                type="checkbox"
+                                label="Cocher si payment extra"
+                                checked={formData.checkbox}
+                                onChange={(e) => setFormData({ ...formData, checkbox: e.target.checked })}
+                            />
+                        </Form.Group>
+
                         <Form.Group className="mb-3" controlId="formNumber">
-                            <Form.Label>Montant</Form.Label>
+                            <Form.Label>Montant (€)</Form.Label>
                             <Form.Control
                                 type="number"
                                 step="0.01"
@@ -247,17 +235,8 @@ function SuiviClientPage() {
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3" controlId="formCheckbox">
-                            <Form.Check
-                                type="checkbox"
-                                label="Cocher si applicable"
-                                checked={formData.checkbox}
-                                onChange={(e) => setFormData({ ...formData, checkbox: e.target.checked })}
-                            />
-                        </Form.Group>
-
                         <Form.Group className="mb-3" controlId="formTextarea">
-                            <Form.Label>Commentaire</Form.Label>
+                            <Form.Label>Commentaire (facultatif)</Form.Label>
                             <Form.Control
                                 as="textarea"
                                 rows={3}

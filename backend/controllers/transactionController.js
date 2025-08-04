@@ -4,6 +4,7 @@ const getTransactionByUserId = (req, res) => {
     const sql = `
         SELECT * FROM transaction
         WHERE user_id = ? AND deleted = FALSE
+        ORDER BY created_at DESC
     `;
     req.db.query(sql, [user_id], (err, results) => {
         if (err) {
