@@ -19,7 +19,6 @@ function NavbarHub() {
             <div>
                 <Link className="text-white nav-link d-inline px-2" to="/">Accueil</Link>
                 <Link className="text-white nav-link d-inline px-2" to="/hub/user-selecte">Selection</Link>
-                <Link className="text-white nav-link d-inline px-2" to="/hub/panier">Panier</Link>
 
 
                 <button onClick={handleLogout} className="btn btn-outline-danger btn-sm ms-3">

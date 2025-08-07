@@ -190,14 +190,14 @@ function ProductsPage() {
         <div className="container-fluid">
             <h2>Panier</h2>
 
-            <Card className="mb-5 w-25">
+            <Card className="mb-5 w-50">
                 <Card.Header>
                     <h4>Portefeuille de: {client.first_name} {client.last_name}</h4>
                 </Card.Header>
                 <Card.Body>
                     <div className="d-flex justify-content-between">
                         <div>
-                            <strong style={{ fontSize: "1.2rem" }}>Solde: </strong>
+                            <strong style={{ fontSize: "1.2rem" }}>Solde abonnement: </strong>
                             <span style={{ fontSize: "1.2rem" }} className={
                                 client.balance < 0
                                     ? "text-danger"
@@ -207,7 +207,7 @@ function ProductsPage() {
                             }>{client.balance}€</span>
                         </div>
                         <div>
-                            <strong style={{ fontSize: "1.2rem" }}>Solde extra: </strong>
+                            <strong style={{ fontSize: "1.2rem" }}>Solde hors abonnement: </strong>
                             <span style={{ fontSize: "1.2rem" }} className={
                                 client.extra_balance < 0
                                     ? "text-danger"

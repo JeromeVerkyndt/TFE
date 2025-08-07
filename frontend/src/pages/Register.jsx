@@ -39,7 +39,7 @@ const Register = () => {
         <Card style={{ width: '50%' }} className="mx-auto">
             <Card.Body>
                 <CardTitle>
-                    <h2>Se connecter</h2>
+                    <h2>S'inscrire</h2>
                 </CardTitle>
                 <Form onSubmit={handleSubmit}>
 
@@ -55,7 +55,7 @@ const Register = () => {
 
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label>Email:</Form.Label>
-                        <Form.Control name="email" type="email" placeholder="Entré mail" onChange={handleChange} value={formData.email} style={{ width: '60%' }} required />
+                        <Form.Control name="email" type="email" placeholder="Entrer mail" onChange={handleChange} value={formData.email} style={{ width: '60%' }} required />
                     </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formBasicPassword">

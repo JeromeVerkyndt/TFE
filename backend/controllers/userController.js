@@ -88,7 +88,7 @@ const subtractFromUserBalance = (req, res) => {
     const { id } = req.params;
     const { amount } = req.body;
 
-    if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+    if (typeof amount !== 'number' || isNaN(amount) || amount < 0) {
         return res.status(400).json({ error: 'Montant invalide' });
     }
 
@@ -122,7 +122,7 @@ const subtractFromUserExtraBalance = (req, res) => {
     const { id } = req.params;
     const { amount } = req.body;
 
-    if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
+    if (typeof amount !== 'number' || isNaN(amount) || amount < 0) {
         return res.status(400).json({ error: 'Montant invalide' });
     }
 

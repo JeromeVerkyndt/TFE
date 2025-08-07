@@ -16,12 +16,31 @@ function Navbar() {
     };
 
     return (
-        <nav className="navbar px-3 fixed-top navbar-dark" style={{ backgroundColor: '#14532d' }}>
-            <Link className="navbar-brand" to="/">{user?.last_name}  {user?.first_name}</Link>
-            <div>
-                <Link className="text-white nav-link d-inline px-2" to="/">Accueil</Link>
-                <Link className="text-white nav-link d-inline px-2" to="/news">News</Link>
-                <Link className="text-white nav-link d-inline px-2" to="/subscription">abonnement</Link>
+        <nav
+            className="navbar px-3 py-2 fixed-top d-flex justify-content-between align-items-center"
+            style={{ backgroundColor: '#14532d' }}
+        >
+            <Link className="navbar-brand text-white fw-bold" to="/">
+                {user?.last_name} {user?.first_name}
+            </Link>
+
+            <div className="d-flex align-items-center gap-2">
+                <div className="dropdown">
+                    <button
+                        className="btn btn-sm btn-light dropdown-toggle"
+                        type="button"
+                        id="menuDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        ☰ Menu
+                    </button>
+                    <ul className="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="menuDropdown">
+                        <li><Link className="dropdown-item" to="/">Accueil</Link></li>
+                        <li><Link className="dropdown-item" to="/news">News</Link></li>
+                        <li><Link className="dropdown-item" to="/subscription">Abonnement</Link></li>
+                    </ul>
+                </div>
 
                 <button onClick={handleLogout} className="btn btn-outline-danger btn-sm ms-3">
                     Déconnexion

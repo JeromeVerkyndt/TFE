@@ -35,7 +35,7 @@ function UsersSelectePage() {
 
     return (
         <Container className="mt-4 text-center">
-            <h1 className="mb-4">Liste des utilisateurs</h1>
+            <h1 className="mb-4">Quel mangeur êtes-vous ?</h1>
             <Row className="d-flex flex-wrap justify-content-center">
                 {users.map((user) => (
                     <div
