@@ -16,8 +16,11 @@ import UserSelectionPage from "./pages/Hub/UserSelection.jsx";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PrivateRoute from './components/PrivateRoute';
+import CreateSubscription from "./pages/Admin/CreateSubscription.jsx";
+import PageSubscription from "./pages/User/Subscription.jsx";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import Subscription from "./pages/User/Subscription.jsx";
 
 function AppContent() {
     const location = useLocation();
@@ -45,6 +48,8 @@ function AppContent() {
                     <Route path="/stock" element={<PrivateRoute><GestionStockPage /></PrivateRoute>} />
                     <Route path="/suivi-client" element={<PrivateRoute><SuiviClientPage /></PrivateRoute>} />
                     <Route path="/hub/user-selecte" element={<PrivateRoute><UserSelectionPage /></PrivateRoute>} />
+                    <Route path="/create-subscription" element={<PrivateRoute><CreateSubscription /></PrivateRoute>} />
+                    <Route path="/subscription" element={<PrivateRoute><PageSubscription /></PrivateRoute>} />
                 </Routes>
             </main>
         </div>

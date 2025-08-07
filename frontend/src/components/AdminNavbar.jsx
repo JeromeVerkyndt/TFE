@@ -24,6 +24,7 @@ function NavbarAdmin() {
                 <Link className="text-white nav-link d-inline px-2" to="/create-inforamtion">Editer News</Link>
                 <Link className="text-white nav-link d-inline px-2" to="/stock">Stock</Link>
                 <Link className="text-white nav-link d-inline px-2" to="/suivi-client">Client</Link>
+                <Link className="text-white nav-link d-inline px-2" to="/create-subscription">Abonnement</Link>
 
                 <button onClick={handleLogout} className="btn btn-outline-danger btn-sm ms-3">
                     Déconnexion

@@ -14,6 +14,7 @@ const newsRoutes = require('./routes/newsRoutes');
 const authRoutes = require('./routes/authRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const uploadRoutes = require("./routes/upload");
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
 
 
 const app = express();
@@ -34,21 +35,19 @@ app.use(express.urlencoded({ extended: true }));  // Pour parser les données UR
 
 
 // Connexion à la base de données
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+    database: process.env.DB_NAME,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect(err => {
-    if (err) {
-        console.error('Erreur de connexion à la base de données:', err);
-    } else {
-        console.log('Connecté à la base de données MySQL');
-    }
-});
+
+
 
 // Exemple de route API
 //app.get('/api/users', (req, res) => {
@@ -76,6 +75,7 @@ app.use('/api/news', newsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/transaction', transactionRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/subscriptions", subscriptionRoutes);
 
 
 // Démarrer le serveur

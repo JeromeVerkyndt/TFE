@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from "react";
-import axios from "axios";
 import api from '../../api.js';
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
-import ToggleButton from "react-bootstrap/ToggleButton";
-import {Checkbox} from "@mui/material";
+
 
 
 function CreateProduct() {

@@ -220,6 +220,26 @@ const updateUserExtraBalance = (req, res) => {
     });
 };
 
+const updateUserSubscription = (req, res) => {
+    const id = req.params.id;
+    const { subscriptionId } = req.body;
+
+    const sql = `UPDATE user SET subscription_id = ? WHERE id = ?`;
+
+    req.db.query(sql, [subscriptionId, id], (err, result) => {
+        if (err) {
+            console.error("Erreur lors de la mise à jour de l'abonnement utilisateur :", err);
+            return res.status(500).json({ error: "Erreur serveur" });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Utilisateur non trouvé" });
+        }
+
+        return res.status(200).json({ message: "Abonnement mis à jour" });
+    });
+};
+
 
 module.exports = {
     softDeleteUser,
@@ -230,6 +250,7 @@ module.exports = {
     subtractFromUserBalance,
     subtractFromUserExtraBalance,
     updateUserExtraBalance,
-    updateUserBalance
+    updateUserBalance,
+    updateUserSubscription
 };
 
