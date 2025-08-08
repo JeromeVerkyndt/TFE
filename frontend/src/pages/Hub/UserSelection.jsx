@@ -49,12 +49,21 @@ function UsersSelectePage() {
                         <Button
                             variant="success"
                             className="w-100"
-                            style={{ height: "60px", display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+                            style={{
+                                height: "60px",
+                                display: 'flex',
+                                flexDirection: 'column',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                textAlign: 'center',
+                                padding: 0,                
+                            }}
                             onClick={() => handleSelectUser(user)}
                         >
-                            <div>{user.first_name}</div>
-                            <div>{user.last_name}</div>
+                            <div style={{ lineHeight: 1 }}>{user.first_name}</div>
+                            <div style={{ lineHeight: 1 }}>{user.last_name}</div>
                         </Button>
+
 
                     </div>
                 ))}
