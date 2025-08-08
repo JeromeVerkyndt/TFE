@@ -15,8 +15,8 @@ router.post('/register', async (req, res) => {
     try {
         const hashed = await bcrypt.hash(password, 10);
         req.db.query(
-            'INSERT INTO user (email, password, first_name, last_name) VALUES (?, ?, ?, ?)',
-            [email, hashed, first_name, last_name],
+            'INSERT INTO user (email, password, first_name, last_name, status_id) VALUES (?, ?, ?, ?, ?)',
+            [email, hashed, first_name, last_name, 2],
             (err) => {
                 if (err) {
                     console.error(err);
