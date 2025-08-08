@@ -208,19 +208,11 @@ function SuiviClientPage() {
                                     <i className="bi bi-pencil-square"></i>
                                 </Button>
 
-                                <Button variant="primary" className="me-2">
-                                    <i className="bi bi-envelope-arrow-up"></i>
-                                </Button>
-
                                 <Button className="me-2" variant="info" onClick={() => {
                                     setSelectedUser(item);
                                     fetchTransactions(item.id);
                                 }}>
                                     <i className="bi bi-receipt"></i>
-                                </Button>
-
-                                <Button variant="danger" className="me-2">
-                                    <i className="bi bi-trash-fill"></i>
                                 </Button>
 
                                 <Button
@@ -231,6 +223,13 @@ function SuiviClientPage() {
                                     <i className="bi bi-cash-coin"></i>
                                 </Button>
 
+                                <Button variant="primary" className="me-2">
+                                    <i className="bi bi-envelope-arrow-up"></i>
+                                </Button>
+
+                                <Button variant="danger" className="me-2">
+                                    <i className="bi bi-trash-fill"></i>
+                                </Button>
 
                             </td>
                         </tr>

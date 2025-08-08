@@ -261,6 +261,24 @@ const updateUserSubscription = (req, res) => {
     });
 };
 
+const updateEmail = (req, res) => {
+    const { id } = req.params;
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ error: "L'email est requis." });
+    }
+
+    const sql = "UPDATE user SET email = ? WHERE id = ?";
+    req.db.query(sql, [email, id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Erreur lors de la mise à jour de l'email." });
+        }
+        res.json({ message: "Email mis à jour avec succès !" });
+    });
+};
+
 
 module.exports = {
     softDeleteUser,
@@ -273,6 +291,7 @@ module.exports = {
     subtractFromUserExtraBalance,
     updateUserExtraBalance,
     updateUserBalance,
-    updateUserSubscription
+    updateUserSubscription,
+    updateEmail
 };
 

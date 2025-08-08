@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
+import React from "react";
 
 function Navbar() {
     const navigate = useNavigate();
@@ -10,6 +11,7 @@ function Navbar() {
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/auth/logout`, {}, { withCredentials: true });
             navigate('/login');
+            window.location.reload();
         } catch (err) {
             console.error("Erreur lors de la déconnexion :", err);
         }
@@ -47,9 +49,23 @@ function Navbar() {
                     </ul>
                 </div>
 
-                <button onClick={handleLogout} className="btn btn-outline-danger btn-sm ms-3">
-                    Déconnexion
-                </button>
+                <div className="dropdown">
+                    <button
+                        className="btn btn-sm btn-light dropdown-toggle"
+                        type="button"
+                        id="menuDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                    >
+                        <i className="bi bi-person"></i>
+                    </button>
+                    <ul className="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="menuDropdown">
+                        <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
+                        <li><Link onClick={handleLogout} className="dropdown-item text-danger">Déconnexion</Link></li>
+
+                    </ul>
+                </div>
+
             </div>
         </nav>
     );

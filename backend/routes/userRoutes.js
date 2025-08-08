@@ -11,7 +11,8 @@ const {
     subtractFromUserExtraBalance,
     updateUserExtraBalance,
     updateUserBalance,
-    updateUserSubscription
+    updateUserSubscription,
+    updateEmail
 } = require('../controllers/userController');
 
 router.get('/clients', getAllClients);
@@ -25,6 +26,7 @@ router.put('/update/subtract/balance/extra/:id', subtractFromUserExtraBalance);
 router.put('/update/balance/extra/:id', updateUserExtraBalance);
 router.put('/update/balance/:id', updateUserBalance);
 router.put('/update/subscription/:id', updateUserSubscription);
+router.put("/:id/email", updateEmail);
 
 
 module.exports = router;

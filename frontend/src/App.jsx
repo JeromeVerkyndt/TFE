@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import useAuth from './hooks/useAuth';
 
 import Home from './pages/home';
-import Test from './pages/test';
 import News from "./pages/User/News.jsx";
 import CreateProduct from "./pages/Admin/CreateProduct.jsx";
 import ProductsPage from "./pages/Hub/Panier.jsx";
@@ -17,10 +16,10 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import PrivateRoute from './components/PrivateRoute';
 import CreateSubscription from "./pages/Admin/CreateSubscription.jsx";
-import PageSubscription from "./pages/User/Subscription.jsx";
+import Subscription from "./pages/User/Subscription.jsx";
+import ProfilePage from "./pages/Profile.jsx";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import Subscription from "./pages/User/Subscription.jsx";
 
 function AppContent() {
     const location = useLocation();
@@ -40,7 +39,6 @@ function AppContent() {
                     <Route path="/register" element={<Register />} />
 
                     <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
-                    <Route path="/test" element={<PrivateRoute><Test /></PrivateRoute>} />
                     <Route path="/news" element={<PrivateRoute><News /></PrivateRoute>} />
                     <Route path="/hub/panier" element={<PrivateRoute><ProductsPage /></PrivateRoute>} />
                     <Route path="/create-product" element={<PrivateRoute><CreateProduct /></PrivateRoute>} />
@@ -49,7 +47,8 @@ function AppContent() {
                     <Route path="/suivi-client" element={<PrivateRoute><SuiviClientPage /></PrivateRoute>} />
                     <Route path="/hub/user-selecte" element={<PrivateRoute><UserSelectionPage /></PrivateRoute>} />
                     <Route path="/create-subscription" element={<PrivateRoute><CreateSubscription /></PrivateRoute>} />
-                    <Route path="/subscription" element={<PrivateRoute><PageSubscription /></PrivateRoute>} />
+                    <Route path="/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
+                    <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
                 </Routes>
             </main>
         </div>

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/authMiddleware');
 
 
-// 🔐 Inscription
+// Inscription
 router.post('/register', async (req, res) => {
     const { email, password, first_name, last_name } = req.body;
 
@@ -32,7 +32,7 @@ router.post('/register', async (req, res) => {
 });
 
 
-// 🔐 Connexion
+// Connexion
 router.post('/login', (req, res) => {
     const { email, password } = req.body;
     req.db.query(
@@ -62,12 +62,12 @@ router.post('/login', (req, res) => {
     });
 });
 
-// 🔓 Déconnexion
+// Déconnexion
 router.post('/logout', (req, res) => {
     res.clearCookie('token').json({ message: 'Déconnecté' });
 });
 
-// Route protégée pour tester la connexion
+// test la connexion
 router.get('/me', authMiddleware, (req, res) => {
     req.db.query(
         `SELECT user.id, user.email, user.first_name, user.last_name, user_status.name AS role
@@ -82,6 +82,31 @@ router.get('/me', authMiddleware, (req, res) => {
         }
     );
 });
+
+// Changer le mot de passe
+router.put('/change-password', authMiddleware, async (req, res) => {
+    const { newPassword } = req.body;
+
+    if (!newPassword) {
+        return res.status(400).json({ error: 'Le nouveau mot de passe est requis' });
+    }
+
+    try {
+        const hashed = await bcrypt.hash(newPassword, 10);
+        req.db.query('UPDATE user SET password = ? WHERE id = ?', [hashed, req.user.id], (err) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ error: 'Erreur lors de la mise à jour du mot de passe' });
+            }
+            res.json({ message: 'Mot de passe changé avec succès' });
+        });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+
 
 
 
