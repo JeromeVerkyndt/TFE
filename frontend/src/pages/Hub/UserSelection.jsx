@@ -56,12 +56,12 @@ function UsersSelectePage() {
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 textAlign: 'center',
-                                padding: 0,                
+                                padding: 0,
                             }}
                             onClick={() => handleSelectUser(user)}
                         >
-                            <div style={{ lineHeight: 1 }}>{user.first_name}</div>
                             <div style={{ lineHeight: 1 }}>{user.last_name}</div>
+                            <div style={{ lineHeight: 1 }}>{user.first_name}</div>
                         </Button>
 
 

@@ -57,6 +57,7 @@ const getAllClients = (req, res) => {
         FROM user
         JOIN user_status ON user.status_id = user_status.id
         WHERE user_status.name = 'CLIENT' AND user.deleted = false
+        ORDER BY user.last_name ASC;
     `;
     req.db.query(sql, (err, results) => {
         if (err) {
