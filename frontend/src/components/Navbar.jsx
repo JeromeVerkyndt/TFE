@@ -22,7 +22,7 @@ function Navbar() {
         >
             <Link className="navbar-brand text-white fw-bold d-flex align-items-center" to="/">
                 <img
-                    src="../../public/panier_blanc.svg"
+                    src="/images/panier_blanc.svg"
                     alt="Profil"
                     className="rounded-circle"
                     style={{ width: '50px', height: '50px', objectFit: 'cover' }}
