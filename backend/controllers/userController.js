@@ -31,6 +31,26 @@ const getAllUsers = (req, res) => {
     });
 };
 
+const getAllClientsInformation = (req, res) => {
+    const sql = `
+        SELECT
+            user.*,
+            subscriptions.price AS subscription_price, subscriptions.name AS subscription_name
+        FROM user
+        JOIN user_status ON user.status_id = user_status.id
+        LEFT JOIN subscriptions ON user.subscription_id = subscriptions.id
+        WHERE user_status.name = 'CLIENT'
+          AND user.deleted = false
+    `;
+    req.db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error fetching client users:', err);
+            return res.status(500).json({ error: 'Server error' });
+        }
+        res.status(200).json(results);
+    });
+};
+
 const getAllClients = (req, res) => {
     const sql = `
         SELECT user.*
@@ -247,6 +267,7 @@ module.exports = {
     getUserById,
     updateUserById,
     getAllClients,
+    getAllClientsInformation,
     subtractFromUserBalance,
     subtractFromUserExtraBalance,
     updateUserExtraBalance,

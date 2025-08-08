@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button'
@@ -21,6 +20,9 @@ function SuiviClientPage() {
 
     const [openCollapseId, setOpenCollapseId] = useState(null);
     const [orderItems, setOrderItems] = useState({});
+
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('fr-BE');
 
     const [showFormModal, setShowFormModal] = useState(false);
     const [formData, setFormData] = useState({
@@ -63,10 +65,10 @@ function SuiviClientPage() {
         try {
             if (formData.checkbox) {
                 await api.put(`user/update/balance/extra/${selectedUser.id}`, {amount: parseFloat(formData.number), comment: formData.textarea});
-                await api.post(`transaction/create/`, {user_id: selectedUser.id, amount: parseFloat(formData.number), type:"Payment extra", order_id: null});
+                await api.post(`transaction/create/`, {user_id: selectedUser.id, amount: parseFloat(formData.number), type:"Payment extra", order_id: null, comment: ""});
             } else {
                 await api.put(`user/update/balance/${selectedUser.id}`, {amount: parseFloat(formData.number), comment: formData.textarea});
-                await api.post(`transaction/create/`, {user_id: selectedUser.id, amount: parseFloat(formData.number), type:"Payment", order_id: null});
+                await api.post(`transaction/create/`, {user_id: selectedUser.id, amount: parseFloat(formData.number), type:"Payment", order_id: null, comment: ""});
 
             }
 
@@ -79,9 +81,28 @@ function SuiviClientPage() {
         }
     }
 
+    const handleSubTransaction = async (userId, amount) => {
+        try {
+            await api.put(`user/update/balance/${userId}`, {amount: parseFloat(amount)});
+            await api.post('transaction/create/', {
+                user_id: userId,
+                amount: amount,
+                type: 'Abonnement',
+                order_id: null,
+                comment: `Paiement de l'abonnement le ${formattedDate}`
+            });
+
+            alert('Transaction créée avec succès');
+        } catch (error) {
+            console.error('Erreur lors de la création de la transaction :', error);
+            alert("Erreur lors de la création de la transaction");
+        }
+    };
+
+
 
     useEffect(() => {
-        api.get('/user')
+        api.get('/user/all-client/information')
             .then(response => {
                 console.log(response.data)
                 setUserList(response.data);
@@ -147,7 +168,11 @@ function SuiviClientPage() {
                             <td>{item.first_name}</td>
                             <td>{item.last_name}</td>
                             <td>{item.email}</td>
-                            <td>{item.subscriptions_id}</td>
+                            <td>
+                                {item.subscription_name?.trim()
+                                    ? `${item.subscription_name} - ${item.subscription_price}€/mois`
+                                    : 'Aucun abonnement'}
+                            </td>
                             <td>
                                 <div className="d-flex align-items-center">
                                     <span className={
@@ -197,6 +222,15 @@ function SuiviClientPage() {
                                 <Button variant="danger" className="me-2">
                                     <i className="bi bi-trash-fill"></i>
                                 </Button>
+
+                                <Button
+                                    className="me-2"
+                                    variant="success"
+                                    onClick={() => handleSubTransaction(item.id, item.subscription_price)}
+                                >
+                                    <i className="bi bi-cash-coin"></i>
+                                </Button>
+
 
                             </td>
                         </tr>
@@ -272,7 +306,7 @@ function SuiviClientPage() {
                                 <th>Date</th>
                                 <th>Montant</th>
                                 <th>Type</th>
-                                <th>Description</th>
+                                <th>Commentaire</th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -283,7 +317,7 @@ function SuiviClientPage() {
                                         <td>{new Date(transaction.created_at).toLocaleString()}</td>
                                         <td>{transaction.amount} €</td>
                                         <td>{transaction.type}</td>
-                                        <td>{transaction.description}</td>
+                                        <td>{transaction.comment}</td>
                                         <td>
                                             {transaction.type === "commande" && (
                                                 <Button

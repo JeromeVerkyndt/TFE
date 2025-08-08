@@ -129,7 +129,8 @@ function ProductsPage() {
                 user_id: client.id,
                 amount: totalAmount,
                 type: "commande",
-                order_id: orderId
+                order_id: orderId,
+                comment: ""
             });
 
             await api.put(`/user/update/subtract/${client.id}`, {

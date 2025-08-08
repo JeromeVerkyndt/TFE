@@ -20,8 +20,13 @@ function Navbar() {
             className="navbar px-3 py-2 fixed-top d-flex justify-content-between align-items-center"
             style={{ backgroundColor: '#14532d' }}
         >
-            <Link className="navbar-brand text-white fw-bold" to="/">
-                {user?.last_name} {user?.first_name}
+            <Link className="navbar-brand text-white fw-bold d-flex align-items-center" to="/">
+                <img
+                    src="../../public/panier_blanc.svg"
+                    alt="Profil"
+                    className="rounded-circle"
+                    style={{ width: '50px', height: '50px', objectFit: 'cover' }}
+                />
             </Link>
 
             <div className="d-flex align-items-center gap-2">

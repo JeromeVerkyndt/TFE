@@ -16,20 +16,20 @@ const getTransactionByUserId = (req, res) => {
 };
 
 const createTransaction = (req, res) => {
-    const { user_id, amount, type, order_id } = req.body;
+    const { user_id, amount, type, order_id, comment } = req.body;
 
     if (!user_id || !amount || !type) {
         return res.status(400).json({ error: "Champs requis manquants" });
     }
 
     const sql = `
-        INSERT INTO transaction (user_id, amount, type, order_id, created_at)
-        VALUES (?, ?, ?, ?, NOW())
+        INSERT INTO transaction (user_id, amount, type, order_id, comment, created_at)
+        VALUES (?, ?, ?, ?, ?, NOW())
     `;
 
     req.db.query(
         sql,
-        [user_id, amount, type, order_id || null],
+        [user_id, amount, type, order_id || null, comment],
         (err, result) => {
             if (err) {
                 console.error("Erreur lors de la création de la transaction :", err);

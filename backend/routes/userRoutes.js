@@ -6,6 +6,7 @@ const {
     getUserById,
     updateUserById,
     getAllClients,
+    getAllClientsInformation,
     subtractFromUserBalance,
     subtractFromUserExtraBalance,
     updateUserExtraBalance,
@@ -17,6 +18,7 @@ router.get('/clients', getAllClients);
 router.delete('/:id', softDeleteUser);
 router.get('/', getAllUsers);
 router.get('/:id', getUserById);
+router.get('/all-client/information', getAllClientsInformation);
 router.put('/update/:id', updateUserById);
 router.put('/update/subtract/:id', subtractFromUserBalance);
 router.put('/update/subtract/balance/extra/:id', subtractFromUserExtraBalance);
