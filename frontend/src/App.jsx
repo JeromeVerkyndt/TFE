@@ -18,6 +18,7 @@ import PrivateRoute from './components/PrivateRoute';
 import CreateSubscription from "./pages/Admin/CreateSubscription.jsx";
 import Subscription from "./pages/User/Subscription.jsx";
 import ProfilePage from "./pages/Profile.jsx";
+import HistoryUser from "./pages/User/HistoricUser.jsx";
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -49,6 +50,7 @@ function AppContent() {
                     <Route path="/create-subscription" element={<PrivateRoute><CreateSubscription /></PrivateRoute>} />
                     <Route path="/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
                     <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+                    <Route path="/compte" element={<PrivateRoute><HistoryUser /></PrivateRoute>} />
                 </Routes>
             </main>
         </div>

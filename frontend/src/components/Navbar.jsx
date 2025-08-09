@@ -60,6 +60,7 @@ function Navbar() {
                         <i className="bi bi-person"></i>
                     </button>
                     <ul className="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="menuDropdown">
+                        <li><Link className="dropdown-item" to="/compte">Compte</Link></li>
                         <li><Link className="dropdown-item" to="/profile">Profile</Link></li>
                         <li><Link onClick={handleLogout} className="dropdown-item text-danger">Déconnexion</Link></li>
 

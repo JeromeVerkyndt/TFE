@@ -70,7 +70,7 @@ router.post('/logout', (req, res) => {
 // test la connexion
 router.get('/me', authMiddleware, (req, res) => {
     req.db.query(
-        `SELECT user.id, user.email, user.first_name, user.last_name, user_status.name AS role
+        `SELECT user.id, user.email, user.first_name, user.last_name, user.balance, user.extra_balance, user_status.name AS role
          FROM user 
          JOIN user_status ON user.status_id = user_status.id
          WHERE user.id = ?`,
