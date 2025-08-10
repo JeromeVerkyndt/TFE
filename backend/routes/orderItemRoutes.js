@@ -6,10 +6,11 @@ const {
     getAllOrderItems,
     getOrderItemsByOrderId
 } = require('../controllers/orderItemController');
+const verifyToken = require("../middleware/authMiddleware");
 
-router.post('/create', createOrderItem);
-router.delete('/:id', softDeleteOrderItem);
-router.get('/', getAllOrderItems);
-router.get('/order/:order_id', getOrderItemsByOrderId);
+router.post('/create', verifyToken, createOrderItem);
+router.delete('/:id', verifyToken, softDeleteOrderItem);
+router.get('/', verifyToken, getAllOrderItems);
+router.get('/order/:order_id', verifyToken, getOrderItemsByOrderId);
 
 module.exports = router;

@@ -14,19 +14,20 @@ const {
     updateUserSubscription,
     updateEmail
 } = require('../controllers/userController');
+const verifyToken = require("../middleware/authMiddleware");
 
-router.get('/clients', getAllClients);
-router.delete('/:id', softDeleteUser);
-router.get('/', getAllUsers);
-router.get('/:id', getUserById);
-router.get('/all-client/information', getAllClientsInformation);
-router.put('/update/:id', updateUserById);
-router.put('/update/subtract/:id', subtractFromUserBalance);
-router.put('/update/subtract/balance/extra/:id', subtractFromUserExtraBalance);
-router.put('/update/balance/extra/:id', updateUserExtraBalance);
-router.put('/update/balance/:id', updateUserBalance);
-router.put('/update/subscription/:id', updateUserSubscription);
-router.put("/:id/email", updateEmail);
+router.get('/clients', verifyToken, getAllClients);
+router.delete('/:id', verifyToken, softDeleteUser);
+router.get('/', verifyToken, getAllUsers);
+router.get('/:id', verifyToken, getUserById);
+router.get('/all-client/information', verifyToken, getAllClientsInformation);
+router.put('/update/:id', verifyToken, updateUserById);
+router.put('/update/subtract/:id', verifyToken, subtractFromUserBalance);
+router.put('/update/subtract/balance/extra/:id', verifyToken, subtractFromUserExtraBalance);
+router.put('/update/balance/extra/:id', verifyToken, updateUserExtraBalance);
+router.put('/update/balance/:id', verifyToken, updateUserBalance);
+router.put('/update/subscription/:id', verifyToken, updateUserSubscription);
+router.put("/:id/email", verifyToken, updateEmail);
 
 
 module.exports = router;
