@@ -133,9 +133,7 @@ function SuiviClientPage() {
                 console.error(error);
             }
         }
-
-
-    }
+    };
 
 
     return (
@@ -221,11 +219,9 @@ function SuiviClientPage() {
                                 </Button>
                             </td>
                             <td>
-
                                 <Button variant="danger" className="me-2" onClick={() => deleteUser(item.id)}>
                                     <i className="bi bi-trash-fill"></i>
                                 </Button>
-
                             </td>
                         </tr>
                     ))}

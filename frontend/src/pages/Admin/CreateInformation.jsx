@@ -136,6 +136,18 @@ function CreateInformationPage() {
             });
     }, []);
 
+    const deleteNews = async (newsId) => {
+        if (window.confirm("Voulez-vous vraiment supprimer cette news ?")) {
+            try {
+                api.delete(`/news/delete/${newsId}`);
+                setNews(prev => prev.filter(p => p.id !== newsId));
+            } catch (error) {
+                alert("Erreur lors de la suppression de la news");
+                console.error(error);
+            }
+        }
+    };
+
     return (
         <>
             <div className="row">
@@ -315,6 +327,11 @@ function CreateInformationPage() {
 
 
                                 )}
+                                <div>
+                                    <Button variant="danger" className="me-2" onClick={() => deleteNews(item.id)}>
+                                        <i className="bi bi-trash-fill"></i>
+                                    </Button>
+                                </div>
                             </Accordion.Body>
                         </Accordion.Item>
                     ))}

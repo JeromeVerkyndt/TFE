@@ -28,6 +28,7 @@ const getAllNews = (req, res) => {
         SELECT n.*, ni.image_url
         FROM news n
         LEFT JOIN news_image ni ON n.id = ni.news_id
+        WHERE deleted = false
     `;
 
     req.db.query(sql, (err, results) => {
@@ -83,9 +84,26 @@ const addImageUrlToNews = (req, res) => {
     });
 };
 
+const softDeleteNews = (req, res) => {
+    const { id } = req.params;
+    const sql = `
+        UPDATE news
+        SET deleted = true, deleted_at = NOW()
+        WHERE id = ?
+    `;
+    req.db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error('Error deleting news:', err);
+            return res.status(500).json({ error: 'Server error' });
+        }
+        res.status(200).json({ message: 'News deleted' });
+    });
+};
+
 
 module.exports = {
     addNews,
     getAllNews,
-    addImageUrlToNews
+    addImageUrlToNews,
+    softDeleteNews
 };
