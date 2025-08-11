@@ -34,7 +34,7 @@ function AppContent() {
             {user?.role === 'ADMIN' && <AdminNavbar />}
 
 
-            <main className="flex-grow-1" style={{ paddingTop: '70px' }}>
+            <main className="flex-grow-1" style={{ paddingTop: '90px' }}>
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />

@@ -17,7 +17,7 @@ const {
 const verifyToken = require("../middleware/authMiddleware");
 
 router.get('/clients', verifyToken, getAllClients);
-router.delete('/:id', verifyToken, softDeleteUser);
+router.delete('/delete/:id', verifyToken, softDeleteUser);
 router.get('/', verifyToken, getAllUsers);
 router.get('/:id', verifyToken, getUserById);
 router.get('/all-client/information', verifyToken, getAllClientsInformation);

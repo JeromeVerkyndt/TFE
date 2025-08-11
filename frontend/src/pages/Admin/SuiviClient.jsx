@@ -11,7 +11,6 @@ import api from '../../api.js';
 
 function SuiviClientPage() {
     const [userList, setUserList] = useState([]);
-    const [modifiedRows, setModifiedRows] = useState({});
 
     const [showTransactionModal, setShowTransactionModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -112,27 +111,6 @@ function SuiviClientPage() {
             });
     }, []);
 
-    const balanceUpdate = (id, balance, extra_balance) => {
-        api.put(`/user/update/${id}`, {
-            balance,
-            extra_balance
-        })
-            .then(() => {
-                alert("User mis à jour !");
-            })
-            .catch((error) => {
-                console.error("Erreur lors de la mise à jour :", error);
-            });
-    };
-
-    const handleInputChange = (index, field, value) => {
-        const newUserList = [...userList];
-        newUserList[index][field] = value;
-        setUserList(newUserList);
-
-        const userId = newUserList[index].id;
-        setModifiedRows(prev => ({ ...prev, [userId]: true }));
-    };
 
     const fetchTransactions = (userId) => {
         api.get(`/transaction/user/${userId}`)
@@ -144,6 +122,20 @@ function SuiviClientPage() {
                 console.error("Erreur lors de la récupération des transactions :", error);
             });
     };
+
+    const deleteUser = async (userId) => {
+        if (window.confirm("Voulez-vous vraiment supprimer ce client ?")) {
+            try {
+                api.delete(`/user/delete/${userId}`);
+                setUserList(prev => prev.filter(p => p.id !== userId));
+            } catch (error) {
+                alert("Erreur lors de la suppression du client");
+                console.error(error);
+            }
+        }
+
+
+    }
 
 
     return (
@@ -159,6 +151,7 @@ function SuiviClientPage() {
                         <th>Abonement</th>
                         <th>Balance</th>
                         <th>Balance Extras</th>
+                        <th></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -226,8 +219,10 @@ function SuiviClientPage() {
                                 <Button variant="primary" className="me-2">
                                     <i className="bi bi-envelope-arrow-up"></i>
                                 </Button>
+                            </td>
+                            <td>
 
-                                <Button variant="danger" className="me-2">
+                                <Button variant="danger" className="me-2" onClick={() => deleteUser(item.id)}>
                                     <i className="bi bi-trash-fill"></i>
                                 </Button>
 
