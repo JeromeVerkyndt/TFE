@@ -15,6 +15,7 @@ const authRoutes = require('./routes/authRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const uploadRoutes = require("./routes/upload");
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
+const mailRoutes = require('./routes/mailRoutes');
 
 
 const app = express();
@@ -76,6 +77,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/transaction', transactionRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
+app.use("/api/mail", mailRoutes);
 
 
 // Démarrer le serveur

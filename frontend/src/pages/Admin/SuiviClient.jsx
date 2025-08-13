@@ -135,6 +135,24 @@ function SuiviClientPage() {
         }
     };
 
+    const sendMail = async (user) => {
+        if (window.confirm(`Voulez-vous vraiment un mail de rappel a ${user.first_name} ${user.last_name } ?`)) {
+            try {
+                await api.post('/mail/send-mail', {
+                        toEmail: user.email,
+                        firstName: user.first_name,
+                        lastName: user.last_name,
+                        userId: user.id,
+
+                });
+                alert("Le mail à bien été envoyé");
+            } catch (error) {
+                console.error(error);
+                alert('Erreur lors de l\'envoi du mail');
+            }
+        }
+    };
+
 
     return (
         <>
@@ -214,7 +232,7 @@ function SuiviClientPage() {
                                     <i className="bi bi-cash-coin"></i>
                                 </Button>
 
-                                <Button variant="primary" className="me-2">
+                                <Button variant="primary" className="me-2" onClick={() => sendMail(item)}>
                                     <i className="bi bi-envelope-arrow-up"></i>
                                 </Button>
                             </td>

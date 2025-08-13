@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
     "mysql2": "^3.14.1",
+    "resend": "^6.0.1",
     "sharp": "^0.34.3"
   },
   "type": "commonjs",
