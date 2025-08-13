@@ -49,7 +49,16 @@ router.post('/login', (req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if (!match) return res.status(401).json({ error: 'Mot de passe incorrect' });
 
-        const token = jwt.sign({ id: user.id, role: user.status_name }, process.env.JWT_SECRET, { expiresIn: '2h' });
+            let tokenOptions = {};
+            if (user.status_name !== 'HUB') {
+                tokenOptions.expiresIn = '2h';
+            }
+
+            const token = jwt.sign(
+                { id: user.id, role: user.status_name },
+                process.env.JWT_SECRET,
+                tokenOptions
+            );
 
         res.cookie('token', token, {
             httpOnly: true,
