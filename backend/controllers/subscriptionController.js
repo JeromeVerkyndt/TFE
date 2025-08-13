@@ -1,4 +1,47 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Subscriptions
+ *   description: API pour gérer les abonnements
+ */
 
+/**
+ * @swagger
+ * /subscriptions:
+ *   post:
+ *     summary: Créer un nouvel abonnement
+ *     tags: [Subscriptions]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *             required:
+ *               - name
+ *               - price
+ *     responses:
+ *       201:
+ *         description: Abonnement créé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 id:
+ *                   type: integer
+ *       500:
+ *         description: Erreur serveur
+ */
 const createSubscription = (req, res) => {
     const { name, description, price } = req.body;
 
@@ -17,6 +60,24 @@ const createSubscription = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /subscriptions:
+ *   get:
+ *     summary: Récupérer tous les abonnements non supprimés
+ *     tags: [Subscriptions]
+ *     responses:
+ *       200:
+ *         description: Liste des abonnements
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: Erreur serveur
+ */
 const getAllSubscriptions = async (req, res) => {
     const sql = `SELECT * FROM subscriptions WHERE deleted = FALSE`;
 
@@ -30,6 +91,27 @@ const getAllSubscriptions = async (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /subscriptions/{id}:
+ *   delete:
+ *     summary: Supprimer un abonnement (soft delete)
+ *     tags: [Subscriptions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID de l'abonnement à supprimer
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Abonnement supprimé (soft delete)
+ *       404:
+ *         description: Abonnement non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
 const softDeleteSubscription = (req, res) => {
     const { id } = req.params;
 
@@ -53,6 +135,38 @@ const softDeleteSubscription = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /subscriptions/{id}/visibility:
+ *   patch:
+ *     summary: Mettre à jour la visibilité d'un abonnement
+ *     tags: [Subscriptions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID de l'abonnement
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               visible:
+ *                 type: boolean
+ *             required:
+ *               - visible
+ *     responses:
+ *       200:
+ *         description: Visibilité mise à jour
+ *       404:
+ *         description: Abonnement non trouvé ou supprimé
+ *       500:
+ *         description: Erreur serveur
+ */
 const updateSubscriptionVisibility = (req, res) => {
     const { id } = req.params;
     const { visible } = req.body;
@@ -77,6 +191,35 @@ const updateSubscriptionVisibility = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /subscriptions/user:
+ *   get:
+ *     summary: Récupérer l' abonnement d'un utilisateur selon son ID
+ *     tags: [Subscriptions]
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         description: ID de l'utilisateur
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Abonnements de l'utilisateur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       400:
+ *         description: userId requis
+ *       404:
+ *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
 const getUserSubscriptions = (req, res) => {
     const userId = req.query.userId;
 

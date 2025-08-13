@@ -1,4 +1,31 @@
-// Create new order
+/**
+ * @swagger
+ * tags:
+ *   name: Order
+ *   description: API pour gérer les commandes
+ */
+/**
+ * @swagger
+ * /orders:
+ *   post:
+ *     summary: Crée une nouvelle commande
+ *     tags: [Order]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               user_id:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       201:
+ *         description: Commande créée avec succès
+ *       500:
+ *         description: Erreur serveur
+ */
 const createOrder = (req, res) => {
     const { user_id } = req.body;
     const sql = `
@@ -14,7 +41,25 @@ const createOrder = (req, res) => {
     });
 };
 
-// Soft delete an order
+/**
+ * @swagger
+ * /orders/{id}:
+ *   delete:
+ *     summary: Supprime une commande (soft delete)
+ *     tags: [Order]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la commande à supprimer
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Commande supprimée avec succès
+ *       500:
+ *         description: Erreur serveur
+ */
 const softDeleteOrder = (req, res) => {
     const { id } = req.params;
     const sql = `
@@ -31,7 +76,24 @@ const softDeleteOrder = (req, res) => {
     });
 };
 
-// Get all orders (not deleted)
+/**
+ * @swagger
+ * /orders:
+ *   get:
+ *     summary: Récupère toutes les commandes non supprimées
+ *     tags: [Order]
+ *     responses:
+ *       200:
+ *         description: Liste des commandes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: Erreur serveur
+ */
 const getAllOrders = (req, res) => {
     const sql = `SELECT * FROM orders WHERE deleted = FALSE`;
     req.db.query(sql, (err, results) => {
@@ -43,7 +105,31 @@ const getAllOrders = (req, res) => {
     });
 };
 
-// Get order by ID
+/**
+ * @swagger
+ * /orders/{id}:
+ *   get:
+ *     summary: Récupère une commande avec sont ID
+ *     tags: [Order]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la commande
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Détails de la commande
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *       404:
+ *         description: Commande non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
 const getOrderById = (req, res) => {
     const { id } = req.params;
     const sql = `
@@ -62,6 +148,31 @@ const getOrderById = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /orders/user/{user_id}:
+ *   get:
+ *     summary: Récupère toutes les commandes d’un utilisateur
+ *     tags: [Order]
+ *     parameters:
+ *       - in: path
+ *         name: user_id
+ *         required: true
+ *         description: ID de l’utilisateur
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Liste des commandes de l’utilisateur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: Erreur serveur
+ */
 const getOrdersByUserId = (req, res) => {
     const { user_id } = req.params;
     const sql = `

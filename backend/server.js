@@ -17,6 +17,8 @@ const uploadRoutes = require("./routes/upload");
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const mailRoutes = require('./routes/mailRoutes');
 
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 const app = express();
 const port = process.env.BACKEND_PORT;
@@ -47,18 +49,27 @@ const db = mysql.createPool({
     queueLimit: 0
 });
 
+// Conf Swagger
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.0', // version OpenAPI
+        info: {
+            title: 'API de mon site',
+            version: '1.0.0',
+            description: 'Documentation des endpoints de mon site',
+        },
+        servers: [
+            {
+                url: `http://localhost:${port}`, // ton URL backend
+            },
+        ],
+    },
+    apis: ['./controllers/*.js'], // chemin vers tes fichiers avec la doc
+};
+
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 
-
-// Exemple de route API
-//app.get('/api/users', (req, res) => {
-    //db.query('SELECT * FROM users', (err, results) => {
-        //if (err) {
-//return res.status(500).json({ error: 'Erreur serveur' });
-//}
-//res.json(results);
-//});
-//});
 
 // Partage la connexion à la DB dans req.db
 app.use((req, res, next) => {
@@ -79,8 +90,11 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/mail", mailRoutes);
 
+// Route doc swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Démarrer le serveur
 app.listen(port, () => {
     console.log(`Backend en cours d'exécution sur http://localhost:${port}`);
+    console.log(`Swagger dispo sur http://localhost:${port}/api-docs`);
 });

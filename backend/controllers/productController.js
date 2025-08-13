@@ -1,3 +1,49 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Product
+ *   description: API pour gérer les produits
+ */
+/**
+ * @swagger
+ * /products:
+ *   post:
+ *     summary: Ajoute un nouveau produit
+ *     tags: [Product]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Tomates"
+ *               description:
+ *                 type: string
+ *                 example: "Tomates fraîches bio"
+ *               unit:
+ *                 type: string
+ *                 example: "kg"
+ *               price:
+ *                 type: number
+ *                 example: 3.5
+ *               included_in_subscription:
+ *                 type: boolean
+ *                 example: false
+ *               image_url:
+ *                 type: string
+ *                 example: "http://exemple.com/tomates.jpg"
+ *               promo:
+ *                 type: number
+ *                 example: 0
+ *     responses:
+ *       201:
+ *         description: Produit ajouté avec succès
+ *       500:
+ *         description: Erreur serveur
+ */
 const addProduct = (req, res) => {
     const {
         name,
@@ -28,6 +74,18 @@ const addProduct = (req, res) => {
     );
 };
 
+/**
+ * @swagger
+ * /products:
+ *   get:
+ *     summary: Récupère tous les produits non supprimés
+ *     tags: [Product]
+ *     responses:
+ *       200:
+ *         description: Liste des produits
+ *       500:
+ *         description: Erreur serveur
+ */
 const getAllProducts = (req, res) => {
     const sql = `SELECT * FROM products WHERE deleted = FALSE`;
 
@@ -41,6 +99,25 @@ const getAllProducts = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /products/{id}:
+ *   delete:
+ *     summary: Supprime un produit (soft delete)
+ *     tags: [Product]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID du produit à supprimer
+ *     responses:
+ *       200:
+ *         description: Produit marqué comme supprimé
+ *       500:
+ *         description: Erreur serveur
+ */
 const softDeleteProduct = (req, res) => {
     const { id } = req.params;
     const sql = `UPDATE products SET deleted = TRUE, deleted_at = NOW() WHERE id = ?`;
@@ -55,6 +132,44 @@ const softDeleteProduct = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /products/{id}:
+ *   put:
+ *     summary: Met à jour un produit par ID
+ *     tags: [Product]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID du produit à mettre à jour
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "Tomates modifiées"
+ *               description:
+ *                 type: string
+ *                 example: "Description mise à jour"
+ *               price:
+ *                 type: number
+ *                 example: 4.0
+ *               included_in_subscription:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Produit mis à jour
+ *       500:
+ *         description: Erreur serveur
+ */
 const updateProductById = (req, res) => {
     const { id } = req.params;
     const { name, description, price, included_in_subscription } = req.body;

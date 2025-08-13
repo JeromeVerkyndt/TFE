@@ -1,3 +1,46 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Order item
+ *   description: API pour gérer les item des transaction
+ */
+/**
+ * @swagger
+ * /order-items:
+ *   post:
+ *     summary: Crée un nouvel item d'une commande
+ *     tags: [Order item]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               order_id:
+ *                 type: integer
+ *                 example: 1
+ *               product_id:
+ *                 type: integer
+ *                 example: 5
+ *               quantity:
+ *                 type: integer
+ *                 example: 3
+ *               promo:
+ *                 type: number
+ *                 example: 0
+ *               price:
+ *                 type: number
+ *                 example: 10.99
+ *               included_in_subscription:
+ *                 type: boolean
+ *                 example: false
+ *     responses:
+ *       201:
+ *         description: item de commande créé
+ *       500:
+ *         description: Erreur serveur
+ */
 const createOrderItem = (req, res) => {
     let { order_id, product_id, quantity, promo, price, included_in_subscription } = req.body;
     if (promo === undefined || promo === null || promo === '') {
@@ -16,7 +59,25 @@ const createOrderItem = (req, res) => {
     });
 };
 
-
+/**
+ * @swagger
+ * /order-items/{id}:
+ *   delete:
+ *     summary: Supprime un item d'une commande (soft delete)
+ *     tags: [Order item]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de l'item à supprimer
+ *     responses:
+ *       200:
+ *         description: Item supprimé avec succès
+ *       500:
+ *         description: Erreur serveur
+ */
 const softDeleteOrderItem = (req, res) => {
     const { id } = req.params;
     const sql = `
@@ -33,6 +94,18 @@ const softDeleteOrderItem = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /order-items:
+ *   get:
+ *     summary: Récupère tous les items de commande non supprimés
+ *     tags: [Order item]
+ *     responses:
+ *       200:
+ *         description: Liste des items de commande
+ *       500:
+ *         description: Erreur serveur
+ */
 const getAllOrderItems = (req, res) => {
     const sql = `SELECT * FROM order_items WHERE deleted = FALSE`;
     req.db.query(sql, (err, results) => {
@@ -44,6 +117,25 @@ const getAllOrderItems = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /order-items/order/{order_id}:
+ *   get:
+ *     summary: Récupère tous les items d'une commande spécifique avec les info produit en plus
+ *     tags: [Order item]
+ *     parameters:
+ *       - in: path
+ *         name: order_id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la commande
+ *     responses:
+ *       200:
+ *         description: Liste des items de la commande
+ *       500:
+ *         description: Erreur serveur
+ */
 const getOrderItemsByOrderId = (req, res) => {
     const { order_id } = req.params;
     const sql = `

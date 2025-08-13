@@ -1,3 +1,28 @@
+/**
+ * @swagger
+ * tags:
+ *   name: Stock
+ *   description: API pour gérer le stock
+ */
+
+/**
+ * @swagger
+ * /stock:
+ *   get:
+ *     summary: Récupérer tout le stock (non supprimé)
+ *     tags: [Stock]
+ *     responses:
+ *       200:
+ *         description: Liste du stock
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: Erreur serveur
+ */
 const getAllStock = (req, res) => {
     const sql = `SELECT * FROM stock WHERE deleted = FALSE and quantity >= 0`;
 
@@ -11,6 +36,34 @@ const getAllStock = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /stock:
+ *   post:
+ *     summary: Ajouter un stock
+ *     tags: [Stock]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               product_id:
+ *                 type: integer
+ *               quantity:
+ *                 type: integer
+ *               promo:
+ *                 type: number
+ *             required:
+ *               - product_id
+ *               - quantity
+ *     responses:
+ *       201:
+ *         description: Stock ajouté avec succès
+ *       500:
+ *         description: Erreur serveur
+ */
 const createStock = (req, res) => {
     const { product_id, quantity, promo } = req.body;
     const sql = `INSERT INTO stock (product_id, quantity, promo, created_at, deleted, deleted_at)
@@ -24,6 +77,26 @@ const createStock = (req, res) => {
         res.status(201).json({ message: 'Stock ajouté avec succès' });
     });
 };
+
+/**
+ * @swagger
+ * /stock/{id}:
+ *   delete:
+ *     summary: Soft delete un stock par ID
+ *     tags: [Stock]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID du stock à supprimer
+ *     responses:
+ *       200:
+ *         description: Stock marqué comme supprimé
+ *       500:
+ *         description: Erreur serveur
+ */
 const softDeleteStock = (req, res) => {
     const { id } = req.params;
     const sql = `UPDATE stock SET deleted = TRUE, deleted_at = NOW() WHERE id = ?`;
@@ -38,6 +111,24 @@ const softDeleteStock = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /stock/data:
+ *   get:
+ *     summary: Récupér les données complètes du stock associer aux données produits
+ *     tags: [Stock]
+ *     responses:
+ *       200:
+ *         description: Liste du stock avec détails produits
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *       500:
+ *         description: Erreur serveur
+ */
 const getAllDataStock = (req, res) => {
     const sql = `
         SELECT stock.*, products.name AS product_name, products.description As product_description, products.price As product_price, products.unit As product_unit, products.image_url As product_image_url, products.included_in_subscription As included
@@ -56,6 +147,38 @@ const getAllDataStock = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /stock/{id}:
+ *   put:
+ *     summary: Mettre à jour un stock par son ID (quantité et promo)
+ *     tags: [Stock]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID du stock à mettre à jour
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               quantity:
+ *                 type: integer
+ *               promo:
+ *                 type: number
+ *             required:
+ *               - quantity
+ *     responses:
+ *       200:
+ *         description: Stock mis à jour
+ *       500:
+ *         description: Erreur serveur
+ */
 const updateStockById = (req, res) => {
     const { id } = req.params;
     const { quantity, promo } = req.body;
@@ -72,6 +195,38 @@ const updateStockById = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /stock/{id}/decrease:
+ *   patch:
+ *     summary: Diminue de x la quantité de stock par ID
+ *     tags: [Stock]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         description: ID du stock à diminuer
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               quantityToSubtract:
+ *                 type: integer
+ *             required:
+ *               - quantityToSubtract
+ *     responses:
+ *       200:
+ *         description: Stock diminué avec succès
+ *       400:
+ *         description: Stock insuffisant ou produit non trouvé
+ *       500:
+ *         description: Erreur serveur
+ */
 const decreaseStockById = (req, res) => {
     const { id } = req.params;
     const { quantityToSubtract } = req.body;

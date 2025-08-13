@@ -1,3 +1,57 @@
+/**
+ * @swagger
+ * tags:
+ *   - name: News
+ *     description: API de gestion des news
+ */
+
+/**
+ * @swagger
+ * /news:
+ *   post:
+ *     summary: Créer une news
+ *     tags: [News]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - text
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Nouvelle mise à jour
+ *               text:
+ *                 type: string
+ *                 example: Voici le texte de la news.
+ *     responses:
+ *       201:
+ *         description: News ajoutée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: News ajouté
+ *                 insertId:
+ *                   type: integer
+ *                   example: 42
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Erreur lors de l'ajout d une news
+ */
 const addNews = (req, res) => {
     const {
         text,
@@ -23,6 +77,52 @@ const addNews = (req, res) => {
     );
 };
 
+/**
+ * @swagger
+ * /news:
+ *   get:
+ *     summary: Récupérer toutes les news non supprimées avec leurs images (Cloudinary)
+ *     tags: [News]
+ *     responses:
+ *       200:
+ *         description: Liste des news
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 42
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
+ *                     example: 2025-08-13T12:34:56Z
+ *                   title:
+ *                     type: string
+ *                     example: Nouvelle mise à jour
+ *                   text:
+ *                     type: string
+ *                     example: Voici le texte de la news.
+ *                   images:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                       format: uri
+ *                       example: https://exemple.com/image.jpg
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Erreur serveur
+ */
 const getAllNews = (req, res) => {
     const sql = `
         SELECT n.*, ni.image_url
@@ -60,7 +160,67 @@ const getAllNews = (req, res) => {
     });
 };
 
-
+/**
+ * @swagger
+ * /news/{id}/images:
+ *   post:
+ *     summary: Ajouter une image à une news
+ *     tags: [News]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de la news
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - imageUrl
+ *             properties:
+ *               imageUrl:
+ *                 type: string
+ *                 format: uri
+ *                 example: https://exemple.com/image.jpg
+ *     responses:
+ *       201:
+ *         description: Image ajoutée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Image ajoutée avec succès
+ *                 imageUrl:
+ *                   type: string
+ *                   example: https://exemple.com/image.jpg
+ *       400:
+ *         description: Aucune URL d'image fournie
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Aucune URL d'image fournie
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Erreur lors de l'ajout de l'image
+ */
 const addImageUrlToNews = (req, res) => {
     const newsId = req.params.id;
     const { imageUrl } = req.body;
@@ -84,6 +244,41 @@ const addImageUrlToNews = (req, res) => {
     });
 };
 
+/**
+ * @swagger
+ * /news/{id}:
+ *   patch:
+ *     summary: Supprimer une news (soft delete)
+ *     tags: [News]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de la news à supprimer
+ *     responses:
+ *       200:
+ *         description: News supprimée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: News deleted
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Server error
+ */
 const softDeleteNews = (req, res) => {
     const { id } = req.params;
     const sql = `
