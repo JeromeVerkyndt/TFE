@@ -24,7 +24,12 @@
  *         description: Erreur serveur
  */
 const getAllStock = (req, res) => {
-    const sql = `SELECT * FROM stock WHERE deleted = FALSE and quantity >= 0`;
+    const sql = `
+        SELECT stock.*, products.name AS product_name, products.description As product_description, products.price As product_price, products.unit As product_unit, products.image_url As product_image_url, products.included_in_subscription As included
+        FROM stock
+                 JOIN products ON stock.product_id = products.id
+        WHERE stock.deleted = FALSE and quantity > 0
+    `;
 
     req.db.query(sql, (err, results) => {
         if (err) {
@@ -134,7 +139,7 @@ const getAllDataStock = (req, res) => {
         SELECT stock.*, products.name AS product_name, products.description As product_description, products.price As product_price, products.unit As product_unit, products.image_url As product_image_url, products.included_in_subscription As included
         FROM stock
         JOIN products ON stock.product_id = products.id
-        WHERE stock.deleted = FALSE
+        WHERE stock.deleted = FALSE 
     `;
 
     req.db.query(sql, (err, results) => {

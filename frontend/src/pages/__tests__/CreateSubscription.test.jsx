@@ -102,7 +102,7 @@ describe("CreateSubscription", () => {
 
         render(<CreateSubscription />);
 
-        const deleteBtn = await screen.findByRole("button", { name: "Supprimer" }); 
+        const deleteBtn = await screen.findByRole("button", { name: "Supprimer" });
         fireEvent.click(deleteBtn);
 
         await waitFor(() => {

@@ -15,7 +15,7 @@ function ProductsPage() {
     const client = location.state?.client;
 
     useEffect(() => {
-        api.get("/stock/all_data")
+        api.get("/stock/")
             .then(response => {
                 setProducts(response.data);
             })
@@ -133,13 +133,35 @@ function ProductsPage() {
                 comment: ""
             });
 
-            await api.put(`/user/update/subtract/${client.id}`, {
-                amount: totalIncluded
-            });
+            let remainingBalance = parseFloat(client.balance);
+            let remainingExtra = parseFloat(client.extra_balance);
 
-            await api.put(`/user/update/subtract/balance/extra/${client.id}`, {
-                amount: totalNotIncluded,
-            })
+            let includedToPay = totalIncluded;
+            let extraToPay = totalNotIncluded;
+
+            if (remainingBalance < includedToPay) {
+                // On prend tout le solde abonnement
+                const fromBalance = remainingBalance;
+                const fromExtra = includedToPay - fromBalance;
+
+                includedToPay = fromBalance; // Ce qui sera retiré du solde abonnement
+                extraToPay += fromExtra; // extra a enlever
+            }
+
+            if (includedToPay > 0) {
+                console.log("Montant à retirer du balance :", includedToPay, "Montant à retirer du extra :", extraToPay);
+
+                await api.put(`/user/update/subtract/${client.id}`, {
+                    amount: includedToPay
+                });
+            }
+
+            if (extraToPay > 0) {
+                await api.put(`/user/update/subtract/balance/extra/${client.id}`, {
+                    amount: extraToPay
+                });
+            }
+
 
             // Diminution du stock après la création des order-items
             const stockUpdateRequests = selectedProducts.map(product => {

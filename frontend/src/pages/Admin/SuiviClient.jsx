@@ -5,6 +5,8 @@ import Modal from "react-bootstrap/Modal";
 import Collapse from 'react-bootstrap/Collapse';
 import Form from "react-bootstrap/Form";
 import api from '../../api.js';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+
 
 
 
@@ -213,6 +215,7 @@ function SuiviClientPage() {
                                         setFormData({ number: '', checkbox: false, textarea: '' });
                                         setShowFormModal(true);
                                     }}
+                                    title="Modifier"
                                 >
                                     <i className="bi bi-pencil-square"></i>
                                 </Button>
@@ -220,7 +223,7 @@ function SuiviClientPage() {
                                 <Button className="me-2" variant="info" onClick={() => {
                                     setSelectedUser(item);
                                     fetchTransactions(item.id);
-                                }}>
+                                }} title="Transactions">
                                     <i className="bi bi-receipt"></i>
                                 </Button>
 
@@ -228,16 +231,17 @@ function SuiviClientPage() {
                                     className="me-2"
                                     variant="success"
                                     onClick={() => handleSubTransaction(item.id, item.subscription_price)}
+                                    title="Abonnement payé"
                                 >
                                     <i className="bi bi-cash-coin"></i>
                                 </Button>
 
-                                <Button variant="primary" className="me-2" onClick={() => sendMail(item)}>
+                                <Button variant="primary" className="me-2" onClick={() => sendMail(item)} title="Envoyer mail">
                                     <i className="bi bi-envelope-arrow-up"></i>
                                 </Button>
                             </td>
                             <td>
-                                <Button variant="danger" className="me-2" onClick={() => deleteUser(item.id)}>
+                                <Button variant="danger" className="me-2" onClick={() => deleteUser(item.id)} title="Supprimer client">
                                     <i className="bi bi-trash-fill"></i>
                                 </Button>
                             </td>

@@ -46,7 +46,7 @@ function AppContent() {
 
                     <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
                     <Route path="/news" element={<PrivateRoute><News /></PrivateRoute>} />
-                    <Route path="/hub/panier" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><ProductsPage /></RoleRoute></PrivateRoute>} />
+                    <Route path="/hub/panier" element={<PrivateRoute><RoleRoute allowedRoles={['HUB']} user={user}><ProductsPage /></RoleRoute></PrivateRoute>} />
                     <Route path="/create-product" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><CreateProduct /></RoleRoute></PrivateRoute>} />
                     <Route path="/create-inforamtion" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><CreateInformationPage /></RoleRoute></PrivateRoute>} />
                     <Route path="/stock" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><GestionStockPage /></RoleRoute></PrivateRoute>} />
