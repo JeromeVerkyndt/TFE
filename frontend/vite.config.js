@@ -15,6 +15,10 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    test: {
+      globals: true,          // ⬅️ Permet d'utiliser expect, test, describe sans les importer
+      environment: 'jsdom',   // ⬅️ Simule un navigateur pour tester les composants React
+      setupFiles: './src/setupTests.js', // ⬅️ Fichier où on importe jest-dom
+    },
   };
 });
-

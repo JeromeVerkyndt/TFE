@@ -101,6 +101,7 @@ function CreateSubscription() {
                                         <Button
                                             variant="danger"
                                             className="me-0"
+                                            aria-label="Supprimer"
                                             onClick={async () => {
                                                 if (window.confirm("Voulez-vous vraiment supprimer cet abonnement ?")) {
                                                     try {
@@ -133,7 +134,7 @@ function CreateSubscription() {
                 <Modal.Body>
                     <Form id="subscriptionForm" onSubmit={handleSubmit} >
 
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="name">
                             <Form.Label className="form-label">Nom de l'abonnement</Form.Label>
                             <Form.Control
                                 type="text"
@@ -145,10 +146,11 @@ function CreateSubscription() {
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="description">
                             <Form.Label className="form-label">Description</Form.Label>
                             <textarea
                                 type="text"
+                                id="description"
                                 name="description"
                                 className="form-control"
                                 value={formData.description}
@@ -157,7 +159,7 @@ function CreateSubscription() {
                             />
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
+                        <Form.Group className="mb-3" controlId="price">
                             <Form.Label className="form-label">Prix (€)</Form.Label>
                             <Form.Control
                                 type="number"

@@ -247,10 +247,10 @@ function GestionStockPage() {
                         </div>
                     </td>
                     <td>
-                        <Button variant="primary" onClick={() => handleUpdate(item.id, item.quantity, item.promo)}>
+                        <Button variant="primary" aria-label="Update" onClick={() => handleUpdate(item.id, item.quantity, item.promo)}>
                             <i className="bi bi-upload"></i>
                         </Button>
-                        <Button variant="danger" onClick={() => handleSoftDelete(item.id)}>
+                        <Button variant="danger" aria-label="Supprimer" onClick={() => handleSoftDelete(item.id)}>
                             <i class="bi bi-trash-fill"></i>
                         </Button>
                     </td>
