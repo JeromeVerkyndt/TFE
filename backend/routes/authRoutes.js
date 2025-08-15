@@ -60,15 +60,21 @@ router.post('/login', (req, res) => {
                 tokenOptions
             );
 
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: true, // true en production avec HTTPS
-            sameSite: 'None',
-            maxAge: 2 * 60 * 60 * 1000,
-        });
+            let cookieOptions = {
+                httpOnly: true,
+                secure: true, // true en production avec HTTPS
+                sameSite: 'None',
+            };
 
-        res.json({ message: 'Connecté' });
-    });
+            if (user.status_name !== 'HUB') {
+                cookieOptions.maxAge = 2 * 60 * 60 * 1000; // 2h
+            }
+
+            res.cookie('token', token, cookieOptions);
+
+            res.json({ message: 'Connecté' });
+
+        });
 });
 
 // Déconnexion

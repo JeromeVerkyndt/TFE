@@ -19,7 +19,6 @@ import CreateSubscription from "./pages/Admin/CreateSubscription.jsx";
 import Subscription from "./pages/User/Subscription.jsx";
 import ProfilePage from "./pages/Profile.jsx";
 import HistoryUser from "./pages/User/HistoricUser.jsx";
-import RoleRoute from "./components/RoleRoute.jsx";
 import NotAuthorized from './pages/NotAuthorized';
 
 
@@ -46,13 +45,13 @@ function AppContent() {
 
                     <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
                     <Route path="/news" element={<PrivateRoute><News /></PrivateRoute>} />
-                    <Route path="/hub/panier" element={<PrivateRoute><RoleRoute allowedRoles={['HUB']} user={user}><ProductsPage /></RoleRoute></PrivateRoute>} />
-                    <Route path="/create-product" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><CreateProduct /></RoleRoute></PrivateRoute>} />
-                    <Route path="/create-inforamtion" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><CreateInformationPage /></RoleRoute></PrivateRoute>} />
-                    <Route path="/stock" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><GestionStockPage /></RoleRoute></PrivateRoute>} />
-                    <Route path="/suivi-client" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><SuiviClientPage /></RoleRoute></PrivateRoute>} />
-                    <Route path="/hub/user-selecte" element={<PrivateRoute><RoleRoute allowedRoles={['HUB']} user={user}><UserSelectionPage /></RoleRoute></PrivateRoute>} />
-                    <Route path="/create-subscription" element={<PrivateRoute><RoleRoute allowedRoles={['ADMIN']} user={user}><CreateSubscription /></RoleRoute></PrivateRoute>} />
+                    <Route path="/hub/panier" element={<PrivateRoute allowedRoles={['HUB']} user={user}><ProductsPage /></PrivateRoute>} />
+                    <Route path="/create-product" element={<PrivateRoute allowedRoles={['ADMIN']} user={user}><CreateProduct /></PrivateRoute>} />
+                    <Route path="/create-inforamtion" element={<PrivateRoute allowedRoles={['ADMIN']} user={user}><CreateInformationPage /></PrivateRoute>} />
+                    <Route path="/stock" element={<PrivateRoute allowedRoles={['ADMIN']} user={user}><GestionStockPage /></PrivateRoute>} />
+                    <Route path="/suivi-client" element={<PrivateRoute allowedRoles={['ADMIN']} user={user}><SuiviClientPage /></PrivateRoute>} />
+                    <Route path="/hub/user-selecte" element={<PrivateRoute allowedRoles={['HUB']} user={user}><UserSelectionPage /></PrivateRoute>} />
+                    <Route path="/create-subscription" element={<PrivateRoute allowedRoles={['ADMIN']} user={user}><CreateSubscription /></PrivateRoute>} />
                     <Route path="/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
                     <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
                     <Route path="/compte" element={<PrivateRoute><HistoryUser /></PrivateRoute>} />
