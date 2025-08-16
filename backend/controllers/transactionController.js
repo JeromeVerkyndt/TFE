@@ -94,20 +94,20 @@ const getTransactionByUserId = (req, res) => {
  *         description: Erreur serveur
  */
 const createTransaction = (req, res) => {
-    const { user_id, amount, type, order_id, comment } = req.body;
+    const { user_id, amount, type, order_id, comment, is_paid } = req.body;
 
     if (!user_id || !amount || !type) {
         return res.status(400).json({ error: "Champs requis manquants" });
     }
 
     const sql = `
-        INSERT INTO transaction (user_id, amount, type, order_id, comment, created_at)
-        VALUES (?, ?, ?, ?, ?, NOW())
+        INSERT INTO transaction (user_id, amount, type, order_id, comment, created_at, is_paid)
+        VALUES (?, ?, ?, ?, ?, NOW(), ?)
     `;
 
     req.db.query(
         sql,
-        [user_id, amount, type, order_id || null, comment],
+        [user_id, amount, type, order_id || null, comment, is_paid],
         (err, result) => {
             if (err) {
                 console.error("Erreur lors de la création de la transaction :", err);
@@ -119,9 +119,127 @@ const createTransaction = (req, res) => {
     );
 };
 
+/**
+ * @swagger
+ * /transactions/{id}/paid:
+ *   put:
+ *     summary: Mettre à jour le statut de paiement d'une transaction
+ *     tags: [Transactions]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID de la transaction à mettre à jour
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - is_paid
+ *             properties:
+ *               is_paid:
+ *                 type: boolean
+ *                 description: Nouveau statut de paiement
+ *     responses:
+ *       200:
+ *         description: Statut de paiement mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 id:
+ *                   type: integer
+ *       400:
+ *         description: Champ requis manquant
+ *       404:
+ *         description: Transaction non trouvée
+ *       500:
+ *         description: Erreur serveur
+ */
+
+const updatePaidStatus = (req, res) => {
+    const { id } = req.params;
+    const { is_paid } = req.body;
+
+    if (typeof is_paid === "undefined") {
+        return res.status(400).json({ error: "Le champ is_paid est requis" });
+    }
+
+    const sql = "UPDATE transaction SET is_paid = ? WHERE id = ?";
+
+    req.db.query(sql, [is_paid, id], (err, result) => {
+        if (err) {
+            console.error("Erreur lors de la mise à jour du paiement :", err);
+            return res.status(500).json({ error: "Erreur serveur" });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Transaction non trouvée" });
+        }
+
+        res.json({ success: true, id });
+    });
+};
+
+
+/**
+ * @swagger
+ * /transactions/user/{userId}/unpaid:
+ *   get:
+ *     summary: Récupérer le nombre d'abonnements non payés d'un utilisateur
+ *     tags: [Transactions]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: ID de l'utilisateur
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Nombre d'abonnements non payés
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 paidCount:
+ *                   type: integer
+ *                   description: Nombre d'abonnements non payés
+ *       500:
+ *         description: Erreur serveur
+ */
+const getUnpaidSubscriptions = (req, res) => {
+    const { userId } = req.params;
+
+    const sql = `
+        SELECT COUNT(*) AS paid_count
+        FROM transaction
+        WHERE user_id = ? AND type = 'Abonnement' AND is_paid = false
+    `;
+
+    req.db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error("Erreur lors de la récupération des transactions :", err);
+            return res.status(500).json({ error: "Erreur serveur" });
+        }
+
+        res.json({ paidCount: results[0].paid_count });
+    });
+};
+
 
 module.exports = {
 
     getTransactionByUserId,
-    createTransaction
+    createTransaction,
+    updatePaidStatus,
+    getUnpaidSubscriptions
 };

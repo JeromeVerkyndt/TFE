@@ -90,7 +90,8 @@ function SuiviClientPage() {
                 amount: amount,
                 type: 'Abonnement',
                 order_id: null,
-                comment: `Paiement de l'abonnement le ${formattedDate}`
+                comment: `Paiement de l'abonnement le ${formattedDate}`,
+                is_paid: false
             });
 
             alert('Transaction créée avec succès');
@@ -104,14 +105,32 @@ function SuiviClientPage() {
 
     useEffect(() => {
         api.get('/user/all-client/information')
-            .then(response => {
-                console.log(response.data)
-                setUserList(response.data);
+            .then(async response => {
+                const users = response.data;
+
+                const usersWithUnpaid = await Promise.all(
+                    users.map(async (user) => {
+                        try {
+                            const subRes = await api.get(`/transaction/paid-subscriptions/${user.id}`); // <-- await ici
+                            return {
+                                ...user,
+                                unpaid_count: subRes.data?.paidCount || 0
+                            };
+                        } catch (err) {
+                            console.error(`Erreur pour l'utilisateur ${user.id} :`, err);
+                            return { ...user, unpaid_count: 0 };
+                        }
+                    })
+                );
+
+                setUserList(usersWithUnpaid);
             })
             .catch(error => {
                 console.error('Erreur lors de la récupération des données des utilisateurs :', error);
             });
     }, []);
+
+
 
 
     const fetchTransactions = (userId) => {
@@ -155,6 +174,22 @@ function SuiviClientPage() {
         }
     };
 
+    const handlePaidStatus = async (transactionId, newValue) => {
+        try {
+            await api.put(`/transaction/${transactionId}/paid`, {
+                is_paid: newValue,
+            });
+            setTransactions((prev) =>
+                prev.map((t) =>
+                    t.id === transactionId ? { ...t, is_paid: newValue } : t
+                )
+            );
+        } catch (err) {
+            console.error("Erreur update paiement :", err);
+            alert("Impossible de mettre à jour le paiement");
+        }
+    };
+
 
     return (
         <>
@@ -181,7 +216,14 @@ function SuiviClientPage() {
                             <td>{item.email}</td>
                             <td>
                                 {item.subscription_name?.trim()
-                                    ? `${item.subscription_name} - ${item.subscription_price}€/mois`
+                                    ? (
+                                        <>
+                                            {`${item.subscription_name} - ${item.subscription_price}€/mois - `}
+                                            <span style={{color: item.unpaid_count === 0 ? 'green' : 'red'}}>
+                                            {item.unpaid_count > 0 ? `Pas en ordre` : 'En ordre'}
+                                            </span>
+                                        </>
+                                    )
                                     : 'Aucun abonnement'}
                             </td>
                             <td>
@@ -316,10 +358,11 @@ function SuiviClientPage() {
                             <thead>
                             <tr>
                                 <th>Date</th>
-                                <th>Montant</th>
                                 <th>Type</th>
                                 <th>Commentaire</th>
-                                <th></th>
+                                <th>Détail</th>
+                                <th>Montant</th>
+                                <th>Payé</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -327,7 +370,6 @@ function SuiviClientPage() {
                                 <React.Fragment key={transaction.id}>
                                     <tr>
                                         <td>{new Date(transaction.created_at).toLocaleString()}</td>
-                                        <td>{transaction.amount} €</td>
                                         <td>{transaction.type}</td>
                                         <td>{transaction.comment}</td>
                                         <td>
@@ -343,6 +385,24 @@ function SuiviClientPage() {
                                                 </Button>
                                             )}
                                         </td>
+                                        <td className={
+                                            transaction.amount < 0
+                                                ? "text-danger"
+                                                : transaction.amount > 0
+                                                    ? "text-success"
+                                                    : ""
+                                        }>{transaction.amount} €
+                                        </td>
+                                        <td>
+                                            {transaction.type === "Abonnement" && (
+                                                <Form.Check
+                                                    type="checkbox"
+                                                    checked={transaction.is_paid}
+                                                    onChange={(e) => handlePaidStatus(transaction.id, e.target.checked)}
+                                                />
+                                            )}
+                                        </td>
+
                                     </tr>
 
                                     {transaction.type === "commande" && (
