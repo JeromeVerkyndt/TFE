@@ -1,4 +1,3 @@
-// backend/server.js
 require('dotenv').config();
 
 const cors = require('cors');
@@ -19,6 +18,8 @@ const mailRoutes = require('./routes/mailRoutes');
 
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const cron = require('node-cron');
+const axios = require('axios');
 
 const app = express();
 const port = process.env.BACKEND_PORT;
@@ -92,6 +93,18 @@ app.use("/api/mail", mailRoutes);
 
 // Route doc swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// reset mensuel de l'abonnement 'min h j * *'
+cron.schedule('28 2 16 * *', async () => {
+    console.log(' Lancement de la mise à jour automatique des soldes via API...');
+
+    try {
+        const response = await axios.put(`http://localhost:${port}/api/user/all-balance/reset-subscription`);
+        console.log(` ${response.data.message} (${response.data.affectedRows} clients mis à jour)`);
+    } catch (error) {
+        console.error(' Erreur lors de l’appel API :', error.response?.data || error.message);
+    }
+});
 
 // Démarrer le serveur
 app.listen(port, () => {

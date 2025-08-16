@@ -84,7 +84,7 @@ function SuiviClientPage() {
 
     const handleSubTransaction = async (userId, amount) => {
         try {
-            await api.put(`user/update/balance/${userId}`, {amount: parseFloat(amount)});
+            await api.put(`user/${userId}/reset-balance`);
             await api.post('transaction/create/', {
                 user_id: userId,
                 amount: amount,
@@ -198,9 +198,9 @@ function SuiviClientPage() {
                             <td>
                                 <div className="d-flex align-items-center">
                                     <span className={
-                                                       item.balance < 0
+                                                       item.extra_balance < 0
                                                            ? "text-danger"
-                                                           : item.balance > 0
+                                                           : item.extra_balance > 0
                                                                ? "text-success"
                                                                : ""
                                     }>{item.extra_balance}€</span>

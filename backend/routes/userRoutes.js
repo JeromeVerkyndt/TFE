@@ -12,7 +12,9 @@ const {
     updateUserExtraBalance,
     updateUserBalance,
     updateUserSubscription,
-    updateEmail
+    updateEmail,
+    resetUserBalanceToSubscription,
+    resetAllClientBalancesToSubscription
 } = require('../controllers/userController');
 const verifyToken = require("../middleware/authMiddleware");
 const verifyRole = require("../middleware/verifyRole");
@@ -29,6 +31,8 @@ router.put('/update/balance/extra/:id', verifyToken,  verifyRole('ADMIN'), updat
 router.put('/update/balance/:id', verifyToken,  verifyRole('ADMIN'), updateUserBalance);
 router.put('/update/subscription/:id', verifyToken,  verifyRole('ADMIN', 'CLIENT'), updateUserSubscription);
 router.put("/:id/email", verifyToken,  verifyRole('ADMIN', 'CLIENT', 'HUB'), updateEmail);
+router.put('/all-balance/reset-subscription', resetAllClientBalancesToSubscription);
+router.put('/:id/reset-balance', resetUserBalanceToSubscription);
 
 
 module.exports = router;

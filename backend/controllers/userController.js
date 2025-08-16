@@ -279,6 +279,54 @@ const updateEmail = (req, res) => {
     });
 };
 
+const resetUserBalanceToSubscription = (req, res) => {
+    const { id } = req.params;
+
+    const sql = `
+        UPDATE user
+            LEFT JOIN subscriptions ON user.subscription_id = subscriptions.id
+            SET user.balance = COALESCE(subscriptions.price, 0)
+        WHERE user.id = ? AND user.deleted = false
+    `;
+
+    req.db.query(sql, [id], (err, result) => {
+        if (err) {
+            console.error('Erreur lors de la remise à zéro du solde :', err);
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+
+        res.status(200).json({ message: 'Balance remise au montant de l’abonnement ou à 0' });
+    });
+};
+
+
+const resetAllClientBalancesToSubscription = (req, res) => {
+    const sql = `
+        UPDATE user
+        LEFT JOIN subscriptions ON user.subscription_id = subscriptions.id
+        JOIN user_status ON user.status_id = user_status.id
+        SET user.balance = COALESCE(subscriptions.price, 0)
+        WHERE user_status.name = 'CLIENT' AND user.deleted = false
+    `;
+
+    req.db.query(sql, (err, result) => {
+        if (err) {
+            console.error('Erreur lors de la remise des soldes :', err);
+            return res.status(500).json({ error: 'Erreur serveur' });
+        }
+
+        res.status(200).json({
+            message: 'Balances des clients remises au montant de leur abonnement ou à 0',
+            affectedRows: result.affectedRows
+        });
+    });
+};
+
+
 
 module.exports = {
     softDeleteUser,
@@ -292,6 +340,8 @@ module.exports = {
     updateUserExtraBalance,
     updateUserBalance,
     updateUserSubscription,
-    updateEmail
+    updateEmail,
+    resetUserBalanceToSubscription,
+    resetAllClientBalancesToSubscription
 };
 
