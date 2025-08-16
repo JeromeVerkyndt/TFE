@@ -95,7 +95,7 @@ app.use("/api/mail", mailRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // reset mensuel de l'abonnement 'min h j * *'
-cron.schedule('28 2 16 * *', async () => {
+cron.schedule('44 2 16 * *', async () => {
     console.log(' Lancement de la mise à jour automatique des soldes via API...');
 
     try {
