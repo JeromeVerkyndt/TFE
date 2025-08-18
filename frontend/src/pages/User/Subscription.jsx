@@ -44,6 +44,7 @@ function PageSubscription() {
             .then(response => {
                 setSubscriptionList(response.data);
                 setUpdating(false);
+                window.location.reload();
             })
             .catch(() => {
                 setError("Erreur lors de la mise à jour de l'abonnement.");
@@ -65,7 +66,7 @@ function PageSubscription() {
                                 <h5 className="card-title text-center">{subscription.name}</h5>
                                 <p className="card-text text-center flex-grow-1">{subscription.description}</p>
                                 <h6 className="mt-3 fw-bold text-center">{subscription.price} €</h6>
-                                {subscription.id !== userSubscriptionId && (
+                                {subscription.id !== user.subscription_id && (
                                     <Button
                                         variant="primary"
                                         className="mt-auto"

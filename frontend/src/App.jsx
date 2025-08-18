@@ -20,6 +20,8 @@ import Subscription from "./pages/User/Subscription.jsx";
 import ProfilePage from "./pages/Profile.jsx";
 import HistoryUser from "./pages/User/HistoricUser.jsx";
 import NotAuthorized from './pages/NotAuthorized';
+import Footer from "./components/Footer.jsx";
+import Confidentialite from "./pages/Confidentialite.jsx";
 
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -55,8 +57,11 @@ function AppContent() {
                     <Route path="/subscription" element={<PrivateRoute><Subscription /></PrivateRoute>} />
                     <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
                     <Route path="/compte" element={<PrivateRoute><HistoryUser /></PrivateRoute>} />
+                    <Route path="/confidentialite" element={<Confidentialite />} />
                 </Routes>
             </main>
+
+            {user?.role === 'CLIENT' && <Footer />}
         </div>
     );
 }
