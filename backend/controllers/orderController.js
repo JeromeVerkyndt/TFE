@@ -6,7 +6,7 @@
  */
 /**
  * @swagger
- * /orders:
+ * /api/order/create:
  *   post:
  *     summary: Crée une nouvelle commande
  *     tags: [Order]
@@ -29,7 +29,7 @@
 const createOrder = (req, res) => {
     const { user_id } = req.body;
     const sql = `
-        INSERT INTO orders (user_id, created_at)
+        INSERT INTO order (user_id, created_at)
         VALUES (?, NOW())
     `;
     req.db.query(sql, [user_id], (err, result) => {
@@ -43,7 +43,7 @@ const createOrder = (req, res) => {
 
 /**
  * @swagger
- * /orders/{id}:
+ * /api/order/{id}:
  *   delete:
  *     summary: Supprime une commande (soft delete)
  *     tags: [Order]
@@ -63,7 +63,7 @@ const createOrder = (req, res) => {
 const softDeleteOrder = (req, res) => {
     const { id } = req.params;
     const sql = `
-        UPDATE orders
+        UPDATE order
         SET deleted = TRUE, deleted_at = NOW()
         WHERE id = ?
     `;
@@ -78,7 +78,7 @@ const softDeleteOrder = (req, res) => {
 
 /**
  * @swagger
- * /orders:
+ * /api/order:
  *   get:
  *     summary: Récupère toutes les commandes non supprimées
  *     tags: [Order]
@@ -95,7 +95,7 @@ const softDeleteOrder = (req, res) => {
  *         description: Erreur serveur
  */
 const getAllOrders = (req, res) => {
-    const sql = `SELECT * FROM orders WHERE deleted = FALSE`;
+    const sql = `SELECT * FROM order WHERE deleted = FALSE`;
     req.db.query(sql, (err, results) => {
         if (err) {
             console.error('Error fetching orders:', err);
@@ -107,7 +107,7 @@ const getAllOrders = (req, res) => {
 
 /**
  * @swagger
- * /orders/{id}:
+ * /api/order/{id}:
  *   get:
  *     summary: Récupère une commande avec sont ID
  *     tags: [Order]
@@ -133,7 +133,7 @@ const getAllOrders = (req, res) => {
 const getOrderById = (req, res) => {
     const { id } = req.params;
     const sql = `
-        SELECT * FROM orders
+        SELECT * FROM order
         WHERE id = ? AND deleted = FALSE
     `;
     req.db.query(sql, [id], (err, results) => {
@@ -150,7 +150,7 @@ const getOrderById = (req, res) => {
 
 /**
  * @swagger
- * /orders/user/{user_id}:
+ * /api/order/user/{user_id}:
  *   get:
  *     summary: Récupère toutes les commandes d’un utilisateur
  *     tags: [Order]
@@ -176,7 +176,7 @@ const getOrderById = (req, res) => {
 const getOrdersByUserId = (req, res) => {
     const { user_id } = req.params;
     const sql = `
-        SELECT * FROM orders
+        SELECT * FROM order
         WHERE user_id = ? AND deleted = FALSE
     `;
     req.db.query(sql, [user_id], (err, results) => {

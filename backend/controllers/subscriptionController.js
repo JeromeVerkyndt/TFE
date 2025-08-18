@@ -1,16 +1,16 @@
 /**
  * @swagger
  * tags:
- *   name: Subscriptions
+ *   name: Subscription
  *   description: API pour gérer les abonnements
  */
 
 /**
  * @swagger
- * /subscriptions:
+ * /api/subscriptions/add:
  *   post:
  *     summary: Créer un nouvel abonnement
- *     tags: [Subscriptions]
+ *     tags: [Subscription]
  *     requestBody:
  *       required: true
  *       content:
@@ -46,7 +46,7 @@ const createSubscription = (req, res) => {
     const { name, description, price } = req.body;
 
     const sql = `
-        INSERT INTO subscriptions (name, description, price, created_at, deleted, visible)
+        INSERT INTO subscription (name, description, price, created_at, deleted, visible)
         VALUES (?, ?, ?, NOW(), false, false)
     `;
 
@@ -62,10 +62,10 @@ const createSubscription = (req, res) => {
 
 /**
  * @swagger
- * /subscriptions:
+ * /api/subscriptions/all:
  *   get:
  *     summary: Récupérer tous les abonnements non supprimés
- *     tags: [Subscriptions]
+ *     tags: [Subscription]
  *     responses:
  *       200:
  *         description: Liste des abonnements
@@ -79,7 +79,7 @@ const createSubscription = (req, res) => {
  *         description: Erreur serveur
  */
 const getAllSubscriptions = async (req, res) => {
-    const sql = `SELECT * FROM subscriptions WHERE deleted = FALSE`;
+    const sql = `SELECT * FROM subscription WHERE deleted = FALSE`;
 
     req.db.query(sql, (err, results) => {
         if (err) {
@@ -93,10 +93,10 @@ const getAllSubscriptions = async (req, res) => {
 
 /**
  * @swagger
- * /subscriptions/{id}:
+ * /api/subscriptions{id}:
  *   delete:
  *     summary: Supprimer un abonnement (soft delete)
- *     tags: [Subscriptions]
+ *     tags: [Subscription]
  *     parameters:
  *       - in: path
  *         name: id
@@ -116,7 +116,7 @@ const softDeleteSubscription = (req, res) => {
     const { id } = req.params;
 
     const sql = `
-        UPDATE subscriptions 
+        UPDATE subscription 
         SET deleted = true, deleted_at = NOW()
         WHERE id = ?
     `;
@@ -137,10 +137,10 @@ const softDeleteSubscription = (req, res) => {
 
 /**
  * @swagger
- * /subscriptions/{id}/visibility:
+ * /api/subscriptions/visibility/{id}:
  *   patch:
  *     summary: Mettre à jour la visibilité d'un abonnement
- *     tags: [Subscriptions]
+ *     tags: [Subscription]
  *     parameters:
  *       - in: path
  *         name: id
@@ -172,7 +172,7 @@ const updateSubscriptionVisibility = (req, res) => {
     const { visible } = req.body;
 
     const sql = `
-        UPDATE subscriptions
+        UPDATE subscription
         SET visible = ?
         WHERE id = ? AND deleted = false
     `;
@@ -193,10 +193,10 @@ const updateSubscriptionVisibility = (req, res) => {
 
 /**
  * @swagger
- * /subscriptions/user:
+ * /api/subscriptions/user:
  *   get:
  *     summary: Récupérer l' abonnement d'un utilisateur selon son ID
- *     tags: [Subscriptions]
+ *     tags: [Subscription]
  *     parameters:
  *       - in: query
  *         name: userId
@@ -245,20 +245,20 @@ const getUserSubscriptions = (req, res) => {
         let params;
 
         if (subscriptionId === null) {
-            sql = 'SELECT * FROM subscriptions WHERE visible = true AND deleted = false';
+            sql = 'SELECT * FROM subscription WHERE visible = true AND deleted = false';
             params = [];
         } else {
-            sql = 'SELECT * FROM subscriptions WHERE id = ? AND deleted = false';
+            sql = 'SELECT * FROM subscription WHERE id = ? AND deleted = false';
             params = [subscriptionId];
         }
 
-        req.db.query(sql, params, (err, subscriptions) => {
+        req.db.query(sql, params, (err, subscription) => {
             if (err) {
                 console.error("Erreur lors de la récupération des abonnements :", err);
                 return res.status(500).json({ error: 'Erreur serveur' });
             }
 
-            return res.status(200).json(subscriptions);
+            return res.status(200).json(subscription);
         });
     });
 };

@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /news:
+ * /api/news:
  *   post:
  *     summary: Créer une news
  *     tags: [News]
@@ -79,7 +79,7 @@ const addNews = (req, res) => {
 
 /**
  * @swagger
- * /news:
+ * /api/news:
  *   get:
  *     summary: Récupérer toutes les news non supprimées avec leurs images (Cloudinary)
  *     tags: [News]
@@ -162,7 +162,7 @@ const getAllNews = (req, res) => {
 
 /**
  * @swagger
- * /news/{id}/images:
+ * /api/news/image/{id}:
  *   post:
  *     summary: Ajouter une image à une news
  *     tags: [News]
@@ -246,7 +246,7 @@ const addImageUrlToNews = (req, res) => {
 
 /**
  * @swagger
- * /news/{id}:
+ * /api/news/delete/{id}:
  *   patch:
  *     summary: Supprimer une news (soft delete)
  *     tags: [News]

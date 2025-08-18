@@ -6,7 +6,7 @@
  */
 /**
  * @swagger
- * /products:
+ * /api/products:
  *   post:
  *     summary: Ajoute un nouveau produit
  *     tags: [Product]
@@ -56,7 +56,7 @@ const addProduct = (req, res) => {
     } = req.body;
 
     const sql = `
-    INSERT INTO products (name, description, unit, price, included_in_subscription, image_url, promo)
+    INSERT INTO product (name, description, unit, price, included_in_subscription, image_url, promo)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
@@ -76,7 +76,7 @@ const addProduct = (req, res) => {
 
 /**
  * @swagger
- * /products:
+ * /api/products:
  *   get:
  *     summary: Récupère tous les produits non supprimés
  *     tags: [Product]
@@ -87,7 +87,7 @@ const addProduct = (req, res) => {
  *         description: Erreur serveur
  */
 const getAllProducts = (req, res) => {
-    const sql = `SELECT * FROM products WHERE deleted = FALSE`;
+    const sql = `SELECT * FROM product WHERE deleted = FALSE`;
 
     req.db.query(sql, (err, results) => {
         if (err) {
@@ -101,7 +101,7 @@ const getAllProducts = (req, res) => {
 
 /**
  * @swagger
- * /products/{id}:
+ * /api/products/{id}:
  *   delete:
  *     summary: Supprime un produit (soft delete)
  *     tags: [Product]
@@ -120,7 +120,7 @@ const getAllProducts = (req, res) => {
  */
 const softDeleteProduct = (req, res) => {
     const { id } = req.params;
-    const sql = `UPDATE products SET deleted = TRUE, deleted_at = NOW() WHERE id = ?`;
+    const sql = `UPDATE product SET deleted = TRUE, deleted_at = NOW() WHERE id = ?`;
 
     req.db.query(sql, [id], (err) => {
         if (err) {
@@ -134,7 +134,7 @@ const softDeleteProduct = (req, res) => {
 
 /**
  * @swagger
- * /products/{id}:
+ * /api/products/update/{id}:
  *   put:
  *     summary: Met à jour un produit par ID
  *     tags: [Product]
@@ -174,7 +174,7 @@ const updateProductById = (req, res) => {
     const { id } = req.params;
     const { name, description, price, included_in_subscription } = req.body;
 
-    const sql = `UPDATE products SET name = ?, description = ?, price = ?, included_in_subscription = ? WHERE id = ?`;
+    const sql = `UPDATE product SET name = ?, description = ?, price = ?, included_in_subscription = ? WHERE id = ?`;
 
     req.db.query(sql, [name, description, price, included_in_subscription, id], (err) => {
         if (err) {

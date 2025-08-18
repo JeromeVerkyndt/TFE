@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /stock:
+ * /api/stock:
  *   get:
  *     summary: Récupérer tout le stock (non supprimé)
  *     tags: [Stock]
@@ -25,9 +25,9 @@
  */
 const getAllStock = (req, res) => {
     const sql = `
-        SELECT stock.*, products.name AS product_name, products.description As product_description, products.price As product_price, products.unit As product_unit, products.image_url As product_image_url, products.included_in_subscription As included
+        SELECT stock.*, product.name AS product_name, product.description As product_description, product.price As product_price, product.unit As product_unit, product.image_url As product_image_url, product.included_in_subscription As included
         FROM stock
-                 JOIN products ON stock.product_id = products.id
+                 JOIN product ON stock.product_id = product.id
         WHERE stock.deleted = FALSE and quantity > 0
     `;
 
@@ -43,7 +43,7 @@ const getAllStock = (req, res) => {
 
 /**
  * @swagger
- * /stock:
+ * /api/stock:
  *   post:
  *     summary: Ajouter un stock
  *     tags: [Stock]
@@ -85,7 +85,7 @@ const createStock = (req, res) => {
 
 /**
  * @swagger
- * /stock/{id}:
+ * /api/stock/{id}:
  *   delete:
  *     summary: Soft delete un stock par ID
  *     tags: [Stock]
@@ -118,7 +118,7 @@ const softDeleteStock = (req, res) => {
 
 /**
  * @swagger
- * /stock/data:
+ * /api/stock/all_data:
  *   get:
  *     summary: Récupér les données complètes du stock associer aux données produits
  *     tags: [Stock]
@@ -136,9 +136,9 @@ const softDeleteStock = (req, res) => {
  */
 const getAllDataStock = (req, res) => {
     const sql = `
-        SELECT stock.*, products.name AS product_name, products.description As product_description, products.price As product_price, products.unit As product_unit, products.image_url As product_image_url, products.included_in_subscription As included
+        SELECT stock.*, product.name AS product_name, product.description As product_description, product.price As product_price, product.unit As product_unit, product.image_url As product_image_url, product.included_in_subscription As included
         FROM stock
-        JOIN products ON stock.product_id = products.id
+        JOIN product ON stock.product_id = product.id
         WHERE stock.deleted = FALSE 
     `;
 
@@ -154,7 +154,7 @@ const getAllDataStock = (req, res) => {
 
 /**
  * @swagger
- * /stock/{id}:
+ * /api/stock/update/{id}:
  *   put:
  *     summary: Mettre à jour un stock par son ID (quantité et promo)
  *     tags: [Stock]
@@ -202,7 +202,7 @@ const updateStockById = (req, res) => {
 
 /**
  * @swagger
- * /stock/{id}/decrease:
+ * /api/stock/decrease/{id}:
  *   patch:
  *     summary: Diminue de x la quantité de stock par ID
  *     tags: [Stock]

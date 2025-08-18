@@ -21,7 +21,7 @@ const verifyRole = require("../middleware/verifyRole");
 
 router.get('/clients', verifyToken, verifyRole('HUB'), getAllClients);
 router.delete('/delete/:id', verifyToken, verifyRole('ADMIN'), softDeleteUser);
-router.get('/', verifyToken, getAllUsers);
+router.get('/', verifyToken,verifyRole('ADMIN','HUB'), getAllUsers);
 router.get('/:id', verifyToken, verifyRole('ADMIN', 'CLIENT', 'HUB'), getUserById);
 router.get('/all-client/information', verifyToken, verifyRole('ADMIN'), getAllClientsInformation);
 router.put('/update/:id', verifyToken, updateUserById);
@@ -31,8 +31,8 @@ router.put('/update/balance/extra/:id', verifyToken,  verifyRole('ADMIN'), updat
 router.put('/update/balance/:id', verifyToken,  verifyRole('ADMIN'), updateUserBalance);
 router.put('/update/subscription/:id', verifyToken,  verifyRole('ADMIN', 'CLIENT'), updateUserSubscription);
 router.put("/:id/email", verifyToken,  verifyRole('ADMIN', 'CLIENT', 'HUB'), updateEmail);
-router.put('/all-balance/reset-subscription', resetAllClientBalancesToSubscription);
-router.put('/:id/reset-balance', resetUserBalanceToSubscription);
+router.put('/all-balance/reset-subscription', verifyToken, resetAllClientBalancesToSubscription);
+router.put('/:id/reset-balance', verifyToken, resetUserBalanceToSubscription);
 
 
 module.exports = router;

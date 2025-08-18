@@ -6,7 +6,7 @@ const verifyRole = require("../middleware/verifyRole");
 
 router.post('/', verifyToken, verifyRole('ADMIN'), addProduct);
 router.get('/', verifyToken, verifyRole('ADMIN', 'CLIENT', 'HUB'), getAllProducts);
-router.delete('/:id', verifyRole('ADMIN'), verifyToken, softDeleteProduct);
+router.delete('/:id',  verifyToken, verifyRole('ADMIN'), softDeleteProduct);
 router.put('/update/:id', verifyToken, verifyRole('ADMIN'), updateProductById);
 
 module.exports = router;

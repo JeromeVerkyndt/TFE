@@ -35,11 +35,11 @@ const getAllClientsInformation = (req, res) => {
     const sql = `
         SELECT
             user.*,
-            subscriptions.price AS subscription_price, subscriptions.name AS subscription_name
+            subscription.price AS subscription_price, subscription.name AS subscription_name
         FROM user
-        JOIN user_status ON user.status_id = user_status.id
-        LEFT JOIN subscriptions ON user.subscription_id = subscriptions.id
-        WHERE user_status.name = 'CLIENT'
+        JOIN user_statu ON user.status_id = user_statu.id
+        LEFT JOIN subscription ON user.subscription_id = subscription.id
+        WHERE user_statu.name = 'CLIENT'
           AND user.deleted = false
     `;
     req.db.query(sql, (err, results) => {
@@ -55,8 +55,8 @@ const getAllClients = (req, res) => {
     const sql = `
         SELECT user.*
         FROM user
-        JOIN user_status ON user.status_id = user_status.id
-        WHERE user_status.name = 'CLIENT' AND user.deleted = false
+        JOIN user_statu ON user.status_id = user_statu.id
+        WHERE user_statu.name = 'CLIENT' AND user.deleted = false
         ORDER BY user.last_name ASC;
     `;
     req.db.query(sql, (err, results) => {
@@ -284,8 +284,8 @@ const resetUserBalanceToSubscription = (req, res) => {
 
     const sql = `
         UPDATE user
-            LEFT JOIN subscriptions ON user.subscription_id = subscriptions.id
-            SET user.balance = COALESCE(subscriptions.price, 0)
+            LEFT JOIN subscription ON user.subscription_id = subscription.id
+            SET user.balance = COALESCE(subscription.price, 0)
         WHERE user.id = ? AND user.deleted = false
     `;
 
@@ -307,10 +307,10 @@ const resetUserBalanceToSubscription = (req, res) => {
 const resetAllClientBalancesToSubscription = (req, res) => {
     const sql = `
         UPDATE user
-        LEFT JOIN subscriptions ON user.subscription_id = subscriptions.id
-        JOIN user_status ON user.status_id = user_status.id
-        SET user.balance = COALESCE(subscriptions.price, 0)
-        WHERE user_status.name = 'CLIENT' AND user.deleted = false
+        LEFT JOIN subscription ON user.subscription_id = subscription.id
+        JOIN user_statu ON user.status_id = user_statu.id
+        SET user.balance = COALESCE(subscription.price, 0)
+        WHERE user_statu.name = 'CLIENT' AND user.deleted = false
     `;
 
     req.db.query(sql, (err, result) => {

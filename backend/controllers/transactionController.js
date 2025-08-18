@@ -7,7 +7,7 @@
 
 /**
  * @swagger
- * /transactions/user/{user_id}:
+ * /api/transaction/user/{user_id}:
  *   get:
  *     summary: Récupérer toutes les transactions d'un utilisateur
  *     tags: [Transactions]
@@ -48,7 +48,7 @@ const getTransactionByUserId = (req, res) => {
 
 /**
  * @swagger
- * /transactions:
+ * /api/transaction/create:
  *   post:
  *     summary: Créer une nouvelle transaction
  *     tags: [Transactions]
@@ -121,7 +121,7 @@ const createTransaction = (req, res) => {
 
 /**
  * @swagger
- * /transactions/{id}/paid:
+ * /api/transaction/{id}/paid:
  *   put:
  *     summary: Mettre à jour le statut de paiement d'une transaction
  *     tags: [Transactions]
@@ -191,7 +191,7 @@ const updatePaidStatus = (req, res) => {
 
 /**
  * @swagger
- * /transactions/user/{userId}/unpaid:
+ * /api/transaction/paid-subscriptions/{userId}:
  *   get:
  *     summary: Récupérer le nombre d'abonnements non payés d'un utilisateur
  *     tags: [Transactions]

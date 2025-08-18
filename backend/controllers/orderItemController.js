@@ -6,7 +6,7 @@
  */
 /**
  * @swagger
- * /order-items:
+ * /api/order-item/create:
  *   post:
  *     summary: Crée un nouvel item d'une commande
  *     tags: [Order item]
@@ -47,7 +47,7 @@ const createOrderItem = (req, res) => {
         promo = 0;
     }
     const sql = `
-        INSERT INTO order_items (order_id, product_id, quantity, promo, created_at, price, included_in_subscription)
+        INSERT INTO order_item (order_id, product_id, quantity, promo, created_at, price, included_in_subscription)
         VALUES (?, ?, ?, ?, NOW(), ?, ?)
     `;
     req.db.query(sql, [order_id, product_id, quantity, promo, price, included_in_subscription], (err, result) => {
@@ -61,7 +61,7 @@ const createOrderItem = (req, res) => {
 
 /**
  * @swagger
- * /order-items/{id}:
+ * /api/order-item/{id}:
  *   delete:
  *     summary: Supprime un item d'une commande (soft delete)
  *     tags: [Order item]
@@ -81,7 +81,7 @@ const createOrderItem = (req, res) => {
 const softDeleteOrderItem = (req, res) => {
     const { id } = req.params;
     const sql = `
-        UPDATE order_items
+        UPDATE order_item
         SET deleted = TRUE, deleted_at = NOW()
         WHERE id = ?
     `;
@@ -96,7 +96,7 @@ const softDeleteOrderItem = (req, res) => {
 
 /**
  * @swagger
- * /order-items:
+ * /api/order-item:
  *   get:
  *     summary: Récupère tous les items de commande non supprimés
  *     tags: [Order item]
@@ -107,7 +107,7 @@ const softDeleteOrderItem = (req, res) => {
  *         description: Erreur serveur
  */
 const getAllOrderItems = (req, res) => {
-    const sql = `SELECT * FROM order_items WHERE deleted = FALSE`;
+    const sql = `SELECT * FROM order_item WHERE deleted = FALSE`;
     req.db.query(sql, (err, results) => {
         if (err) {
             console.error('Error fetching order_items:', err);
@@ -119,7 +119,7 @@ const getAllOrderItems = (req, res) => {
 
 /**
  * @swagger
- * /order-items/order/{order_id}:
+ * /api/order-item/order/{order_id}:
  *   get:
  *     summary: Récupère tous les items d'une commande spécifique avec les info produit en plus
  *     tags: [Order item]
@@ -139,10 +139,10 @@ const getAllOrderItems = (req, res) => {
 const getOrderItemsByOrderId = (req, res) => {
     const { order_id } = req.params;
     const sql = `
-        SELECT order_items.*, products.name AS name, products.description As description, products.unit As unit
-        FROM order_items
-        JOIN products ON order_items.product_id = products.id
-        WHERE order_id = ? AND order_items.deleted = FALSE
+        SELECT order_item.*, product.name AS name, product.description As description, product.unit As unit
+        FROM order_item
+        JOIN product ON order_item.product_id = product.id
+        WHERE order_id = ? AND order_item.deleted = FALSE
     `;
     req.db.query(sql, [order_id], (err, results) => {
         if (err) {
