@@ -13,6 +13,7 @@ function ProductsPage() {
     const location = useLocation();
     const navigate = useNavigate();
     const client = location.state?.client;
+    const [modalProduct, setModalProduct] = useState(null);
 
     useEffect(() => {
         api.get("/stock/")
@@ -163,11 +164,10 @@ function ProductsPage() {
             }
 
 
-            // Diminution du stock après la création des order-items
+            // Diminution du stock après la création de la commande
             const stockUpdateRequests = selectedProducts.map(product => {
                 const quantity = parseFloat(selectedItems[product.id].quantity);
 
-                // Ici product.id = ID du stock (et pas product_id = ID du produit)
                 return api.put(`/stock/decrease/${product.id}`,
                     { quantityToSubtract: quantity },
                     { withCredentials: true }
@@ -258,7 +258,7 @@ function ProductsPage() {
                         .map(product => (
                         <ListGroup.Item key={product.id} className="d-flex justify-content-between align-items-center">
 
-                            <div className="d-flex align-items-center gap-2">
+                            <div className="d-flex align-items-center gap-2" style={{ marginRight: '10px', marginLeft: '10px' }}>
                                 {product.product_image_url && (
                                     <img
                                         src={product.product_image_url}
@@ -269,26 +269,35 @@ function ProductsPage() {
                             </div>
 
                             <div style={{ maxWidth: '500%', marginRight: '10px' }}>
-                                <h4>{product.product_name}</h4> (Stock: {product.quantity} {product.product_unit})
+                                <h3>
+                                    {product.product_name}
+                                    <i
+                                        className="bi bi-info-circle"
+                                        style={{ marginLeft: '10px', cursor: 'pointer', color: 'black' }}
+                                        onClick={() => setModalProduct(product)}
+                                    ></i>
+                                </h3>
+                                <span style={{ fontSize: '20px' }}>(Stock: {product.quantity} {product.product_unit})</span>
                             </div>
 
                             <div style={{ margin: '0 10px' }}>
                                 {product.promo > 0 ? (
                                     <div>
-                                        <h4 style={{ marginBottom: 0, color: '#dc2626' }}>
+                                        <h3 style={{ marginBottom: 0, color: '#dc2626' }}>
                                             {product.product_price * (1 - product.promo / 100).toFixed(2)} €/{product.product_unit}
-                                        </h4>
+                                        </h3>
                                         <small>
-                                            <s style={{ color: '#6b7280' }}>{product.product_price} €</s>{' '}
-                                            <span style={{ color: '#16a34a' }}>-{product.promo}%</span>
+                                            <s style={{ color: '#6b7280', fontSize: '20px' }}>{product.product_price} €</s>{' '}
+                                            <span style={{ color: '#16a34a', fontSize: '20px' }}>-{product.promo}%</span>
                                         </small>
                                     </div>
                                 ) : (
-                                    <h4>
+                                    <h3>
                                         {product.product_price} € / {product.product_unit}
-                                    </h4>
+                                    </h3>
                                 )}
                             </div>
+
 
                             <InputGroup style={{ width: "150px", marginLeft: 'auto', marginRight: "15px" }}>
                                 <Form.Control
@@ -323,7 +332,7 @@ function ProductsPage() {
                         .map(product => (
                             <ListGroup.Item key={product.id} className="d-flex justify-content-between align-items-center">
 
-                                <div className="d-flex align-items-center gap-2">
+                                <div className="d-flex align-items-center gap-2" style={{ marginRight: '10px', marginLeft: '10px' }}>
                                     {product.product_image_url && (
                                         <img
                                             src={product.product_image_url}
@@ -334,24 +343,32 @@ function ProductsPage() {
                                 </div>
 
                                 <div style={{ maxWidth: '500%', marginRight: '10px' }}>
-                                    <h4>{product.product_name}</h4> (Stock: {product.quantity} {product.product_unit})
+                                    <h3>
+                                        {product.product_name}
+                                        <i
+                                        className="bi bi-info-circle"
+                                        style={{ marginLeft: '10px', cursor: 'pointer', color: 'black' }}
+                                        onClick={() => setModalProduct(product)}
+                                    ></i>
+                                    </h3>
+                                    <span style={{ fontSize: '20px' }}>(Stock: {product.quantity} {product.product_unit})</span>
                                 </div>
 
                                 <div style={{ margin: '0 10px' }}>
                                     {product.promo > 0 ? (
                                         <div>
-                                            <h4 style={{ marginBottom: 0, color: '#dc2626' }}>
+                                            <h3 style={{ marginBottom: 0, color: '#dc2626' }}>
                                                 {product.product_price * (1 - product.promo / 100).toFixed(2)} €/{product.product_unit}
-                                            </h4>
+                                            </h3>
                                             <small>
-                                                <s style={{ color: '#6b7280' }}>{product.product_price} €</s>{' '}
-                                                <span style={{ color: '#16a34a' }}>-{product.promo}%</span>
+                                                <s style={{ color: '#6b7280', fontSize: '20px' }}>{product.product_price} €</s>{' '}
+                                                <span style={{ color: '#16a34a', fontSize: '20px' }}>-{product.promo}%</span>
                                             </small>
                                         </div>
                                     ) : (
-                                        <h4>
+                                        <h3>
                                             {product.product_price} € / {product.product_unit}
-                                        </h4>
+                                        </h3>
                                     )}
                                 </div>
 
@@ -465,6 +482,20 @@ function ProductsPage() {
                     )}
                 </Modal.Footer>
 
+            </Modal>
+
+            <Modal show={modalProduct !== null} onHide={() => setModalProduct(null)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{modalProduct?.product_name}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>{modalProduct?.product_description || "Pas de description disponible."}</p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setModalProduct(null)}>
+                        Fermer
+                    </Button>
+                </Modal.Footer>
             </Modal>
 
         </>

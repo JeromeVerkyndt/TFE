@@ -27,7 +27,7 @@ const getAllStock = (req, res) => {
     const sql = `
         SELECT stock.*, product.name AS product_name, product.description As product_description, product.price As product_price, product.unit As product_unit, product.image_url As product_image_url, product.included_in_subscription As included
         FROM stock
-                 JOIN product ON stock.product_id = product.id
+        JOIN product ON stock.product_id = product.id
         WHERE stock.deleted = FALSE and quantity > 0
     `;
 
