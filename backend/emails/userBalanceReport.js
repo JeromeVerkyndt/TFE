@@ -1,51 +1,48 @@
 function generateUserReport(user) {
-    let dettes = [];
+    const toNumber = (val) => {
+        if (typeof val === 'number' && Number.isFinite(val)) return val;
+        if (val == null) return 0;
+        const cleaned = String(val)
+            .replace(/[^\d.,\-]/g, '')
+            .replace(',', '.');
+        const n = Number(cleaned);
+        return Number.isFinite(n) ? n : 0;
+    };
 
-    if (user.balance < 0) {
-        dettes.push(`Abonnement : ${Math.abs(user.balance)}€ à payer`);
-    }
+    const extra = toNumber(user.extra_balance);
+    const due = extra < 0 ? Math.abs(extra) : 0;
 
-    if (user.extra_balance < 0) {
-        dettes.push(`Hors abonnement : ${Math.abs(user.extra_balance)}€ à payer`);
-    }
+    const fmtEUR = (n) =>
+        new Intl.NumberFormat('fr-BE', { maximumFractionDigits: 2 }).format(n) + '\u00A0€';
 
-    const hasDebt = dettes.length > 0;
+    const textCore = due > 0
+        ? `Vous devez encore payer ${fmtEUR(due)} d’extra impayé.`
+        : (extra === 0
+            ? `Aucun extra impayé.`
+            : `Vous avez ${fmtEUR(extra)} de crédit extra. Rien à payer.`);
 
-    const textMessage = hasDebt
-        ? `Bonjour ${user.first_name} ${user.last_name},
+    const textMessage = `Bonjour ${user.first_name} ${user.last_name},
 
-Voici un rappel de l'état de votre portefeuille :
-
-${dettes.join('\n')}
-
-À bientôt !`
-        : `Bonjour ${user.first_name} ${user.last_name},
-
-Votre portefeuille est à jour ✅
+${textCore}
 
 À bientôt !`;
+
+    const htmlCore = due > 0
+        ? `Vous devez encore payer <strong>${fmtEUR(due)}</strong> d’extra impayé.`
+        : (extra === 0
+            ? `Aucun extra impayé.`
+            : `Vous avez <strong>${fmtEUR(extra)}</strong> de crédit extra. Rien à payer.`);
 
     const htmlMessage = `
     <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #000;">
         <h2 style="margin: 0 0 12px; color: #000;">Bonjour ${user.first_name} ${user.last_name},</h2>
-        ${
-        hasDebt
-            ? `
-                  <p style="color: #000;">Voici un rappel de l'état de votre portefeuille :</p>
-                  <ul style="margin: 8px 0 16px; padding-left: 20px; color: #000;">
-                      ${dettes.map(d => `<li style="color: #000;">${d}</li>`).join('')}
-                  </ul>
-                `
-            : `
-                  <p style="color: #000;">Votre portefeuille est <strong>à jour</strong> ✅</p>
-                `
-    }
+        <p style="color: #000;">${htmlCore}</p>
         <p style="margin-top:16px; color: #000;">À bientôt&nbsp;!</p>
     </div>
     `;
 
     return {
-        subject: `Rappel - État de votre portefeuille`,
+        subject: due > 0 ? `Rappel - Extra impayé (${fmtEUR(due)})` : `Rappel - Aucun extra impayé`,
         text: textMessage,
         html: htmlMessage
     };
