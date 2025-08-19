@@ -43,6 +43,17 @@
  */
 const createOrderItem = (req, res) => {
     let { order_id, product_id, quantity, promo, price, included_in_subscription } = req.body;
+
+    if (
+        order_id === undefined ||
+        product_id === undefined ||
+        quantity === undefined ||
+        price === undefined ||
+        included_in_subscription === undefined
+    ) {
+        return res.status(400).json({ error: 'order_id, product_id, quantity, price, included_in_subscription sont requis' });
+    }
+
     if (promo === undefined || promo === null || promo === '') {
         promo = 0;
     }

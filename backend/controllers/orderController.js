@@ -28,6 +28,9 @@
  */
 const createOrder = (req, res) => {
     const { user_id } = req.body;
+    if (user_id === undefined || user_id === null) {
+        return res.status(400).json({ error: 'user_id est requis' });
+    }
     const sql = `
         INSERT INTO order (user_id, created_at)
         VALUES (?, NOW())

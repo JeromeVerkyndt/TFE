@@ -44,6 +44,9 @@
  */
 const createSubscription = (req, res) => {
     const { name, description, price } = req.body;
+    if (!name || price === undefined) {
+        return res.status(400).json({ error: 'nom et prix requis' });
+    }
 
     const sql = `
         INSERT INTO subscription (name, description, price, created_at, deleted, visible)
@@ -170,6 +173,9 @@ const softDeleteSubscription = (req, res) => {
 const updateSubscriptionVisibility = (req, res) => {
     const { id } = req.params;
     const { visible } = req.body;
+    if (visible === undefined) {
+        return res.status(400).json({ error: 'visible requis' });
+    }
 
     const sql = `
         UPDATE subscription

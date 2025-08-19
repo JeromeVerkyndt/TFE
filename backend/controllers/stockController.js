@@ -71,6 +71,9 @@ const getAllStock = (req, res) => {
  */
 const createStock = (req, res) => {
     const { product_id, quantity, promo } = req.body;
+    if (product_id === undefined || quantity === undefined) {
+        return res.status(400).json({ error: 'product_id and quantity sont requis' });
+    }
     const sql = `INSERT INTO stock (product_id, quantity, promo, created_at, deleted, deleted_at)
                VALUES (?, ?, ?, NOW(), false, NULL)`;
 
@@ -187,6 +190,9 @@ const getAllDataStock = (req, res) => {
 const updateStockById = (req, res) => {
     const { id } = req.params;
     const { quantity, promo } = req.body;
+    if (quantity === undefined) {
+        return res.status(400).json({ error: 'quantity est requis' });
+    }
 
     const sql = `UPDATE stock SET quantity = ?, promo = ? WHERE id = ?`;
 
@@ -235,6 +241,9 @@ const updateStockById = (req, res) => {
 const decreaseStockById = (req, res) => {
     const { id } = req.params;
     const { quantityToSubtract } = req.body;
+    if (quantityToSubtract === undefined) {
+        return res.status(400).json({ error: 'quantityToSubtract est requis' });
+    }
 
     const sql = `UPDATE stock SET quantity = quantity - ? WHERE id = ? AND quantity >= ?`;
 

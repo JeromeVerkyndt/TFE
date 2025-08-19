@@ -58,6 +58,10 @@ const addNews = (req, res) => {
         title
     } = req.body;
 
+    if (!title || !text) {
+        return res.status(400).json({ error: 'title et text sont requis' });
+    }
+
     const sql = `
     INSERT INTO news (text, title)
     VALUES (?, ?)

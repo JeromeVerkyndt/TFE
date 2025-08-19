@@ -55,6 +55,17 @@ const addProduct = (req, res) => {
         promo
     } = req.body;
 
+    if (
+        !name ||
+        !unit ||
+        price === undefined ||
+        included_in_subscription === undefined
+    ) {
+        return res.status(400).json({
+            error: 'name, unit, price, included_in_subscription sont requis'
+        });
+    }
+
     const sql = `
     INSERT INTO product (name, description, unit, price, included_in_subscription, image_url, promo)
     VALUES (?, ?, ?, ?, ?, ?, ?)
