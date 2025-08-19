@@ -1,4 +1,3 @@
-// tests/utils/http.js
 const httpMocks = require('node-mocks-http');
 const { EventEmitter } = require('events');
 
