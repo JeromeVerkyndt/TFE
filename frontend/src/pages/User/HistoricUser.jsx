@@ -115,7 +115,14 @@ function Transactions() {
                         <React.Fragment key={transaction.id}>
                             <tr>
                                 <td>{new Date(transaction.created_at).toLocaleString()}</td>
-                                <td>{transaction.amount} €</td>
+                                <td className={
+                                    transaction.amount < 0
+                                        ? "text-danger"
+                                        : transaction.amount > 0
+                                            ? "text-success"
+                                            : ""
+                                }>{transaction.amount} €
+                                </td>
                                 <td>{transaction.type}</td>
                                 <td>{transaction.comment}</td>
                                 <td>
