@@ -96,7 +96,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // reset mensuel de l'abonnement 'sec min h j * *'
 cron.schedule(
-    '0 25 21 1 * *',
+    '0 44 23 1 * *',
     async () => {
         console.log('Lancement de la mise à jour automatique des soldes via API...');
 
