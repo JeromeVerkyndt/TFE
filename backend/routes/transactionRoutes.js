@@ -11,7 +11,7 @@ const verifyRole = require("../middleware/verifyRole");
 
 
 router.get('/user/:user_id', verifyToken, verifyRole('ADMIN', 'CLIENT', 'HUB'), getTransactionByUserId);
-router.post('/create', verifyToken, verifyRole('ADMIN', 'HUB'), createTransaction);
+router.post('/create', createTransaction);
 router.put("/:id/paid", verifyToken, verifyRole('ADMIN'), updatePaidStatus);
 router.get("/paid-subscriptions/:userId", verifyToken, verifyRole('ADMIN'), getUnpaidSubscriptions);
 

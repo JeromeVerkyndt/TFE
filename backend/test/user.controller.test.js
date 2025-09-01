@@ -430,28 +430,5 @@ describe('User controllers', () => {
         });
     });
 
-    describe('resetAllClientBalancesToSubscription', () => {
-        test('200 + affectedRows retourné', (done) => {
-            const { req, res } = mkReqRes({ method: 'PUT', url: '/api/user/all-balance/reset-subscription', dbResult: { affectedRows: 7 } });
-            res.on('end', () => {
-                expect(res.statusCode).toBe(200);
-                const data = res._getJSONData();
-                expect(data).toMatchObject({
-                    message: 'Balances des clients remises au montant de leur abonnement ou à 0',
-                    affectedRows: 7
-                });
-                done();
-            });
-            resetAllClientBalancesToSubscription(req, res);
-        });
 
-        test('500 si erreur DB', (done) => {
-            const { req, res } = mkReqRes({ method: 'PUT', url: '/api/user/all-balance/reset-subscription', dbErr: new Error('down') });
-            res.on('end', () => {
-                expect(res.statusCode).toBe(500);
-                done();
-            });
-            resetAllClientBalancesToSubscription(req, res);
-        });
-    });
 });

@@ -157,7 +157,7 @@ function SuiviClientPage() {
     };
 
     const sendMail = async (user) => {
-        if (window.confirm(`Voulez-vous vraiment un mail de rappel a ${user.first_name} ${user.last_name } ?`)) {
+        if (window.confirm(`Voulez-vous vraiment envoyer un mail de rappel a ${user.first_name} ${user.last_name } ?`)) {
             try {
                 await api.post('/mail/send-mail', {
                         toEmail: user.email,
@@ -273,7 +273,7 @@ function SuiviClientPage() {
                                     className="me-2"
                                     variant="success"
                                     onClick={() => handleSubTransaction(item.id, item.subscription_price)}
-                                    title="Abonnement payé"
+                                    title="Créditer Abonnement"
                                 >
                                     <i className="bi bi-cash-coin"></i>
                                 </Button>

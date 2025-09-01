@@ -304,27 +304,60 @@ const resetUserBalanceToSubscription = (req, res) => {
 };
 
 
-const resetAllClientBalancesToSubscription = (req, res) => {
-    const sql = `
-        UPDATE user
-        LEFT JOIN subscription ON user.subscription_id = subscription.id
-        JOIN user_statu ON user.status_id = user_statu.id
-        SET user.balance = COALESCE(subscription.price, 0)
-        WHERE user_statu.name = 'CLIENT' AND user.deleted = false
+async function resetAllClientBalancesToSubscription(req, res) {
+    const db = req.db.promise();
+    const conn = await db.getConnection();
+
+    try {
+        await conn.beginTransaction();
+
+        await conn.query(`DROP TEMPORARY TABLE IF EXISTS tmp_target_user_ids`);
+        await conn.query(`
+      CREATE TEMPORARY TABLE tmp_target_user_ids (
+        user_id BIGINT UNSIGNED PRIMARY KEY,
+        amount  DECIMAL(10,2) NOT NULL
+      ) ENGINE=Memory
+    `);
+
+        const insertTargetsSql = `
+      INSERT INTO tmp_target_user_ids (user_id, amount)
+      SELECT u.id, COALESCE(s.price, 0) AS amount
+      FROM user u
+      LEFT JOIN subscription s ON u.subscription_id = s.id
+      JOIN user_statu us ON u.status_id = us.id
+      WHERE us.name = 'CLIENT' AND u.deleted = FALSE
     `;
+        await conn.query(insertTargetsSql);
 
-    req.db.query(sql, (err, result) => {
-        if (err) {
-            console.error('Erreur lors de la remise des soldes :', err);
-            return res.status(500).json({ error: 'Erreur serveur' });
-        }
+        const updateSql = `
+      UPDATE user u
+      JOIN tmp_target_user_ids t ON t.user_id = u.id
+      SET u.balance = t.amount
+    `;
+        const [updateRes] = await conn.query(updateSql);
 
-        res.status(200).json({
-            message: 'Balances des clients remises au montant de leur abonnement ou à 0',
-            affectedRows: result.affectedRows
+        await conn.commit();
+
+        const [rows] = await conn.query(`SELECT user_id, amount FROM tmp_target_user_ids`);
+
+        await conn.query(`DROP TEMPORARY TABLE IF EXISTS tmp_target_user_ids`);
+
+        return res.status(200).json({
+            message: 'Balances mises à jour. IDs et montants renvoyés pour créer les transactions.',
+            affectedUsers: updateRes.affectedRows,
+            users: rows
         });
-    });
-};
+    } catch (err) {
+        await conn.rollback();
+        console.error('Erreur reset balances :', err);
+        return res.status(500).json({ error: 'Erreur serveur' });
+    } finally {
+        conn.release();
+    }
+}
+
+module.exports = { resetAllClientBalancesToSubscription };
+
 
 
 

@@ -130,6 +130,13 @@ function Transactions() {
                                             Voir détails
                                         </Button>
                                     )}
+                                    {transaction.type === "Abonnement" && (
+                                        transaction.is_paid ? (
+                                            <span style={{ color: "green", fontWeight: "bold" }}>Payé</span>
+                                        ) : (
+                                            <span style={{ color: "red", fontWeight: "bold" }}>Non payé</span>
+                                        )
+                                    )}
                                 </td>
                             </tr>
 

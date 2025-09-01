@@ -94,17 +94,60 @@ app.use("/api/mail", mailRoutes);
 // Route doc swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// reset mensuel de l'abonnement 'min h j * *'
-cron.schedule('30 9 1 * *', async () => {
-    console.log(' Lancement de la mise à jour automatique des soldes via API...');
+// reset mensuel de l'abonnement 'sec min h j * *'
+cron.schedule(
+    '0 9 19 1 * *',
+    async () => {
+        console.log('Lancement de la mise à jour automatique des soldes via API...');
 
-    try {
-        const response = await axios.put(`http://localhost:${port}/api/user/all-balance/reset-subscription`);
-        console.log(` ${response.data.message} (${response.data.affectedRows} clients mis à jour)`);
-    } catch (error) {
-        console.error(' Erreur lors de l’appel API :', error.response?.data || error.message);
-    }
-});
+        try {
+            const { data } = await axios.put(`http://localhost:${port}/api/user/all-balance/reset-subscription`);
+            const users = Array.isArray(data?.users) ? data.users : [];
+
+            if (users.length === 0) {
+                console.log('Aucun client à traiter.');
+                return;
+            }
+
+            const formattedDate = new Date().toLocaleDateString('fr-BE', { timeZone: 'Europe/Brussels' });
+
+            const concurrency = 10;
+            let index = 0;
+
+            async function worker() {
+                while (true) {
+                    const i = index++;
+                    if (i >= users.length) break;
+
+                    const { user_id, amount } = users[i];
+                    try {
+                        await axios.post(`http://localhost:${port}/api/transaction/create/`, {
+                            user_id,
+                            amount,
+                            type: 'Abonnement',
+                            order_id: null,
+                            comment: `Paiement de l'abonnement le ${formattedDate}`,
+                            is_paid: false
+                        });
+                        console.log(`Transaction OK user=${user_id} amount=${amount}`);
+                    } catch (e) {
+                        console.error(
+                            `Erreur transaction user=${user_id}`,
+                            e.response?.data || e.message
+                        );
+                    }
+                }
+            }
+
+            await Promise.allSettled(Array.from({ length: concurrency }, worker));
+
+            console.log(`Transactions terminées. total=${users.length}`);
+        } catch (error) {
+            console.error('Erreur lors de l’appel API :', error.response?.data || error.message);
+        }
+    },
+    { timezone: 'Europe/Brussels', scheduled: true }
+);
 
 // Démarrer le serveur
 app.listen(port, () => {

@@ -32,7 +32,7 @@ const createOrder = (req, res) => {
         return res.status(400).json({ error: 'user_id est requis' });
     }
     const sql = `
-        INSERT INTO order (user_id, created_at)
+        INSERT INTO orders (user_id, created_at)
         VALUES (?, NOW())
     `;
     req.db.query(sql, [user_id], (err, result) => {
@@ -66,7 +66,7 @@ const createOrder = (req, res) => {
 const softDeleteOrder = (req, res) => {
     const { id } = req.params;
     const sql = `
-        UPDATE order
+        UPDATE orders
         SET deleted = TRUE, deleted_at = NOW()
         WHERE id = ?
     `;
@@ -98,7 +98,7 @@ const softDeleteOrder = (req, res) => {
  *         description: Erreur serveur
  */
 const getAllOrders = (req, res) => {
-    const sql = `SELECT * FROM order WHERE deleted = FALSE`;
+    const sql = `SELECT * FROM orders WHERE deleted = FALSE`;
     req.db.query(sql, (err, results) => {
         if (err) {
             console.error('Error fetching orders:', err);
@@ -136,7 +136,7 @@ const getAllOrders = (req, res) => {
 const getOrderById = (req, res) => {
     const { id } = req.params;
     const sql = `
-        SELECT * FROM order
+        SELECT * FROM orders
         WHERE id = ? AND deleted = FALSE
     `;
     req.db.query(sql, [id], (err, results) => {
@@ -179,7 +179,7 @@ const getOrderById = (req, res) => {
 const getOrdersByUserId = (req, res) => {
     const { user_id } = req.params;
     const sql = `
-        SELECT * FROM order
+        SELECT * FROM orders
         WHERE user_id = ? AND deleted = FALSE
     `;
     req.db.query(sql, [user_id], (err, results) => {
